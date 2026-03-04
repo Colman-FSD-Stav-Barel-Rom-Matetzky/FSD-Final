@@ -1,16 +1,32 @@
-import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import { authRoutes } from './routes/auth.route';
+import { DbConfig } from './config/db.config';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swagger';
 
 export const app = express();
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/auth', authRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.get('/health', (_req: Request, res: Response) => {
+  res.status(200).json({ status: 'OK', message: 'Server is running' });
+});
+
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.error('Error:', err.message);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
+
 const connectDB = async () => {
   try {
-    const mongoUri = process.env.MONGO_URI;
+    const mongoUri = DbConfig.mongoUri;
 
     if (!mongoUri) {
       throw new Error('MONGO_URI is not defined in environment variables');
@@ -26,14 +42,3 @@ const connectDB = async () => {
 };
 
 void connectDB();
-
-// Health check route
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ status: 'OK', message: 'Server is running' });
-});
-
-// Global error handler
-app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-  console.error('Global error:', err.message);
-  res.status(500).json({ error: 'Internal Server Error' });
-});
