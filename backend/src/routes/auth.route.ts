@@ -7,7 +7,7 @@ import {
   googleCallback,
 } from '../controllers/auth.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { configuredPassport as passport } from '../config/passport';
+import { configuredPassport as passport } from '../config/passport.config';
 
 const router = express.Router();
 
