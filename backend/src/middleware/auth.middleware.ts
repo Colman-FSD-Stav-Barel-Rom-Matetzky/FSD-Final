@@ -12,6 +12,7 @@ export const authMiddleware = (
 
   if (!token) {
     res.status(401).json({ error: 'Access token missing' });
+
     return;
   }
 
@@ -19,6 +20,7 @@ export const authMiddleware = (
     const decoded = jwt.verify(token, JwtConfig.secret) as {
       _id: string;
     };
+
     req.user = decoded;
 
     next();

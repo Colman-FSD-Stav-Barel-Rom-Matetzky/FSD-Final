@@ -9,6 +9,8 @@ import {
 import { authMiddleware } from '../middleware/auth.middleware';
 import { configuredPassport as passport } from '../config/passport.config';
 
+import { AppConfig } from '../config/app.config';
+
 const router = express.Router();
 
 /**
@@ -159,7 +161,7 @@ router.get(
   '/google/callback',
   passport.authenticate('google', {
     session: false,
-    failureRedirect: '/login',
+    failureRedirect: `${AppConfig.clientUrl}/login?error=google_auth_failed`,
   }) as express.RequestHandler,
   googleCallback,
 );
