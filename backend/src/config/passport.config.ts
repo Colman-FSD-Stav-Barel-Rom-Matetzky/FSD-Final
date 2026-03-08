@@ -28,6 +28,7 @@ passport.use(
               email,
               username,
               profileImage: profile.photos?.[0].value,
+              isGoogleUser: true,
             });
           }
 

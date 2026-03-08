@@ -49,20 +49,27 @@ const verifyRefreshTokenAndGetUser = async (
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { username, password } = req.body as {
+    const { username, password, email } = req.body as {
       username?: string;
       password?: string;
+      email?: string;
     };
 
-    if (!username || !password) {
-      res.status(400).json({ error: 'Username and password are required' });
+    if (!username || !password || !email) {
+      res
+        .status(400)
+        .json({ error: 'Username, password, and email are required' });
+
       return;
     }
 
-    const existingUser = await User.findOne({ username });
+    const existingUser = await User.findOne({
+      $or: [{ username }, { email }],
+    });
 
     if (existingUser) {
-      res.status(400).json({ error: 'Username already taken' });
+      res.status(400).json({ error: 'Username or email already taken' });
+
       return;
     }
 
@@ -70,6 +77,7 @@ export const register = async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = await User.create({
       username,
+      email,
       password: hashedPassword,
     });
 
@@ -82,7 +90,13 @@ export const register = async (req: Request, res: Response) => {
       data: {
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
-        user: { _id: user.id, username: user.username },
+        user: {
+          _id: user.id,
+          username: user.username,
+          email: user.email,
+          profileImage: user.profileImage,
+          isGoogleUser: user.isGoogleUser,
+        },
       },
     });
   } catch (error) {
@@ -101,6 +115,7 @@ export const login = async (req: Request, res: Response) => {
 
     if (!username || !password) {
       res.status(400).json({ error: 'Username and password are required' });
+
       return;
     }
 
@@ -108,6 +123,7 @@ export const login = async (req: Request, res: Response) => {
 
     if (!user || !user.password) {
       res.status(400).json({ error: 'Invalid credentials' });
+
       return;
     }
 
@@ -115,6 +131,7 @@ export const login = async (req: Request, res: Response) => {
 
     if (!validPassword) {
       res.status(400).json({ error: 'Invalid credentials' });
+
       return;
     }
 
@@ -150,6 +167,7 @@ export const refresh = async (req: Request, res: Response) => {
       res
         .status(verification.status || 401)
         .json({ error: verification.error });
+
       return;
     }
 
@@ -157,6 +175,7 @@ export const refresh = async (req: Request, res: Response) => {
 
     if (!user.refreshTokens.includes(refreshToken!)) {
       res.status(401).json({ error: 'Invalid refresh token' });
+
       return;
     }
 
@@ -170,6 +189,11 @@ export const refresh = async (req: Request, res: Response) => {
       data: {
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
+        user: {
+          _id: user.id,
+          username: user.username,
+          profileImage: user.profileImage,
+        },
       },
     });
   } catch (error) {
@@ -188,6 +212,7 @@ export const logout = async (req: Request, res: Response) => {
       res
         .status(verification.status || 401)
         .json({ error: verification.error });
+
       return;
     }
 

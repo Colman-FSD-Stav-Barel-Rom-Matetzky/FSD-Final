@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
     username: { type: String, required: true, unique: true },
     password: { type: String },
     profileImage: { type: String },
+    isGoogleUser: { type: Boolean, default: false },
     refreshTokens: { type: [String], default: [] },
   },
   { timestamps: true },
@@ -16,6 +17,7 @@ export interface IUser extends mongoose.Document {
   username: string;
   password?: string;
   profileImage?: string;
+  isGoogleUser?: boolean;
   refreshTokens: string[];
 }
 
