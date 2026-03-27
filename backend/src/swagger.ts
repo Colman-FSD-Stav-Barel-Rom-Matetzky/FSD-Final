@@ -48,6 +48,16 @@ const swaggerOptions = {
             createdAt: { type: 'string', format: 'date-time' },
           },
         },
+        Comment: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string' },
+            content: { type: 'string' },
+            owner: { type: 'string' },
+            post: { type: 'string' },
+            createdAt: { type: 'string', format: 'date-time' },
+          },
+        },
       },
     },
     security: [

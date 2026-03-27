@@ -35,6 +35,7 @@ export class PostController extends BaseController<IPost> {
     this.post = this.post.bind(this);
     this.put = this.put.bind(this);
     this.del = this.del.bind(this);
+    this.toggleLike = this.toggleLike.bind(this);
   }
 
   async get(req: Request, res: Response) {
@@ -202,6 +203,25 @@ export class PostController extends BaseController<IPost> {
         error:
           error instanceof Error ? error.message : 'An unknown error occurred',
       });
+    }
+  }
+
+  async toggleLike(req: Request, res: Response) {
+    try {
+      const post = await this.model.findById(req.params.id);
+      if (!post) return res.status(404).json({ error: "Post not found" });
+      const userId = getAuthenticatedUserId(req);
+      if (!userId) return res.status(401).json({ error: "Unauthorized" });
+      const likeIndex = post.likes.findIndex((id) => id.toString() === userId.toString());
+      if (likeIndex === -1) {
+        post.likes.push(new mongoose.Types.ObjectId(userId));
+      } else {
+        post.likes.splice(likeIndex, 1);
+      }
+      await post.save();
+      res.status(200).json({ data: { likes: post.likes } });
+    } catch (error) {
+      res.status(500).json({ error: error instanceof Error ? error.message : "An unknown error occurred" });
     }
   }
 }

@@ -4,6 +4,7 @@ import cors from 'cors';
 import path from 'path';
 import { authRoutes } from './routes/auth.route';
 import { postRoutes } from './routes/post.route';
+import { commentRoutes } from './routes/comment.route';
 import { DbConfig } from './config/db.config';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger';
@@ -17,6 +18,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/auth', authRoutes);
 app.use('/posts', postRoutes);
+app.use('/comments', commentRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/health', (_req: Request, res: Response) => {
