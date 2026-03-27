@@ -31,6 +31,23 @@ const swaggerOptions = {
             profileImage: { type: 'string' },
           },
         },
+        Post: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string' },
+            content: { type: 'string' },
+            image: {
+              type: 'string',
+              description: 'Relative URL to image',
+            },
+            owner: { type: 'string' },
+            likes: {
+              type: 'array',
+              items: { type: 'string' },
+            },
+            createdAt: { type: 'string', format: 'date-time' },
+          },
+        },
       },
     },
     security: [
