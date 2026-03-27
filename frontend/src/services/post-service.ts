@@ -62,6 +62,10 @@ export const postService = {
     return getWithAbort<FeedResponse>(`/posts?${params.toString()}`);
   },
 
+  getById: (postId: string) => {
+    return getWithAbort<{ data: Post }>(`/posts/${postId}`);
+  },
+
   toggleLike: (postId: string) => {
     return postWithAbort<Post>(`/posts/${postId}/like`);
   },
