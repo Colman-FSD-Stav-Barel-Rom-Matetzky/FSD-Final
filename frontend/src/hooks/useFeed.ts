@@ -58,5 +58,29 @@ export const useFeed = () => {
     [],
   );
 
-  return { posts, hasMore, fetchMore, isLoading, error, updatePostLikes };
+  const addPost = useCallback((post: Post) => {
+    setPosts((prev) => [post, ...prev]);
+  }, []);
+
+  const updatePost = useCallback((updatedPost: Post) => {
+    setPosts((prev) =>
+      prev.map((post) => (post._id === updatedPost._id ? updatedPost : post)),
+    );
+  }, []);
+
+  const removePost = useCallback((postId: string) => {
+    setPosts((prev) => prev.filter((post) => post._id !== postId));
+  }, []);
+
+  return {
+    posts,
+    hasMore,
+    fetchMore,
+    isLoading,
+    error,
+    updatePostLikes,
+    addPost,
+    updatePost,
+    removePost,
+  };
 };
