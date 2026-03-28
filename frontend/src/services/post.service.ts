@@ -17,4 +17,11 @@ export const postService = {
     });
     return data.data;
   },
+
+  searchPosts: async (query: string): Promise<Post[]> => {
+    const { data } = await apiClient.get<{ data: Post[] }>(`/posts/search`, {
+      params: { q: query },
+    });
+    return data.data;
+  },
 };
