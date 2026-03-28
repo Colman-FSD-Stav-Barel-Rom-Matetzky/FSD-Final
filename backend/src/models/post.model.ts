@@ -5,6 +5,7 @@ export interface IPost extends Document {
   author: Types.ObjectId;
   images?: string[];
   likes: Types.ObjectId[];
+  embedding?: number[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +16,7 @@ const postSchema: Schema = new Schema(
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     images: [{ type: String }],
     likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    embedding: [{ type: Number }],
   },
   { timestamps: true },
 );
