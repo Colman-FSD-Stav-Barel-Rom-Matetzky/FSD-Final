@@ -2,9 +2,12 @@ import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import { authRoutes } from './routes/auth.route';
+import userRoutes from './routes/user.route';
+import postRoutes from './routes/post.route';
 import { DbConfig } from './config/db.config';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger';
+import path from 'path';
 
 export const app = express();
 
@@ -12,7 +15,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
+app.use('/posts', postRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/health', (_req: Request, res: Response) => {
