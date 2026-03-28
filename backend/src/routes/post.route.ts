@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { postController } from '../controllers/post.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { uploadMiddleware } from '../middleware/upload.middleware';
+import { aiRateLimiter } from '../middleware/rate-limit.middleware';
 
 const router = Router();
 
@@ -70,6 +71,40 @@ router.post(
   authMiddleware,
   uploadMiddleware.array('images', 5),
   postController.createWithImages.bind(postController),
+);
+
+/**
+ * @swagger
+ * /posts/search:
+ *   get:
+ *     summary: Semantic search for posts using AI
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Conversational search query
+ *     responses:
+ *       200:
+ *         description: A ranked list of posts
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       429:
+ *         description: Too many search requests
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get(
+  '/search',
+  authMiddleware,
+  aiRateLimiter,
+  postController.searchPosts.bind(postController),
 );
 
 // We can map basic CRUD from BaseController
