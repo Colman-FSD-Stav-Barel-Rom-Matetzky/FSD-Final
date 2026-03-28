@@ -23,9 +23,11 @@ describe('Auth Endpoints', () => {
   };
 
   it('should register a new user', async () => {
-    const res = await request(app)
-      .post('/auth/register')
-      .send({ username: 'testuser', password: 'password123' });
+    const res = await request(app).post('/auth/register').send({
+      username: 'testuser',
+      password: 'password123',
+      email: 'testuser@example.com',
+    });
 
     const body = res.body as AuthResponse;
 
@@ -38,9 +40,11 @@ describe('Auth Endpoints', () => {
   });
 
   it('should reject existing username', async () => {
-    const res = await request(app)
-      .post('/auth/register')
-      .send({ username: 'testuser', password: 'password123' });
+    const res = await request(app).post('/auth/register').send({
+      username: 'testuser',
+      password: 'password123',
+      email: 'testuser@example.com',
+    });
 
     const body = res.body as AuthResponse;
     expect(res.status).toBe(400);
