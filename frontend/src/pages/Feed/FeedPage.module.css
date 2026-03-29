@@ -1,0 +1,12 @@
+.feedContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.endMessage {
+  text-align: center;
+  color: var(--bs-secondary-color);
+  padding: 2rem 0;
+  font-size: 0.9rem;
+}

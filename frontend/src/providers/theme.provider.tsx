@@ -9,7 +9,7 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const savedTheme = localStorage.getItem('theme');
 
-    return (savedTheme as 'light' | 'dark') || 'light';
+    return savedTheme || 'dark';
   });
 
   useEffect(() => {
