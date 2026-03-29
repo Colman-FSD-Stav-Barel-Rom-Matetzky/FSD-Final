@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { userController } from '../controllers/user.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { uploadMiddleware } from '../middleware/upload.middleware';
+import { uploadProfileImage } from '../middleware/upload.middleware';
 
 export const userRoutes = Router();
 
@@ -74,7 +74,7 @@ userRoutes.get(
 userRoutes.put(
   '/:id',
   authMiddleware,
-  uploadMiddleware.single('profileImage'),
+  uploadProfileImage,
   userController.updateProfile.bind(userController),
 );
 

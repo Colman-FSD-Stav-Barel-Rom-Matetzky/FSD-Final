@@ -13,7 +13,8 @@ export class CommentController extends BaseController<IComment> {
 
   async get(req: Request, res: Response) {
     try {
-      const postId = typeof req.query.postId === 'string' ? req.query.postId : undefined;
+      const postId =
+        typeof req.query.postId === 'string' ? req.query.postId : undefined;
 
       if (!postId) {
         res.status(400).json({ error: 'postId is required' });
@@ -25,11 +26,14 @@ export class CommentController extends BaseController<IComment> {
         return;
       }
 
-      const limitParam = typeof req.query.limit === 'string' ? req.query.limit : '10';
+      const limitParam =
+        typeof req.query.limit === 'string' ? req.query.limit : '10';
       const parsedLimit = Number.parseInt(limitParam, 10);
-      const limit = Number.isNaN(parsedLimit) || parsedLimit < 1 ? 10 : parsedLimit;
+      const limit =
+        Number.isNaN(parsedLimit) || parsedLimit < 1 ? 10 : parsedLimit;
 
-      const lastId = typeof req.query.lastId === 'string' ? req.query.lastId : undefined;
+      const lastId =
+        typeof req.query.lastId === 'string' ? req.query.lastId : undefined;
 
       if (lastId && !mongoose.Types.ObjectId.isValid(lastId)) {
         res.status(400).json({ error: 'Invalid lastId cursor' });
@@ -40,7 +44,9 @@ export class CommentController extends BaseController<IComment> {
         ? { post: postId, _id: { $lt: new mongoose.Types.ObjectId(lastId) } }
         : { post: postId };
 
-      const comments = await Comment.find(filter).sort({ _id: -1 }).limit(limit);
+      const comments = await Comment.find(filter)
+        .sort({ _id: -1 })
+        .limit(limit);
       const lastComment = comments[comments.length - 1];
 
       res.status(200).json({
@@ -56,8 +62,12 @@ export class CommentController extends BaseController<IComment> {
   }
 
   async post(req: Request, res: Response) {
-    const content = typeof req.body.content === 'string' ? req.body.content.trim() : '';
-    const postId = typeof req.body.post === 'string' ? req.body.post : undefined;
+    const body = req.body as Record<string, unknown>;
+    const bodyContent = body.content;
+    const bodyPost = body.post;
+
+    const content = typeof bodyContent === 'string' ? bodyContent.trim() : '';
+    const postId = typeof bodyPost === 'string' ? bodyPost : undefined;
 
     if (!content) {
       res.status(400).json({ error: 'Content is required' });

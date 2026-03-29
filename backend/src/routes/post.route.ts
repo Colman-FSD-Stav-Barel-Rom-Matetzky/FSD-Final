@@ -1,7 +1,6 @@
 import express from 'express';
 import { postController } from '../controllers/post.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { aiRateLimiter } from '../middleware/rate-limit.middleware';
 import { uploadPostImage } from '../middleware/upload.middleware';
 
 const router = express.Router();
@@ -36,7 +35,53 @@ const router = express.Router();
  *       200:
  *         description: Posts fetched successfully
  */
-router.get('/', authMiddleware, postController.get);
+router.get('/', authMiddleware, postController.get.bind(postController));
+
+/**
+ * @swagger
+ * /posts/search:
+ *   get:
+ *     summary: Search posts semantically using AI
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Search results
+ */
+router.get(
+  '/search',
+  authMiddleware,
+  postController.searchPosts.bind(postController),
+);
+
+/**
+ * @swagger
+ * /posts/user/{id}:
+ *   get:
+ *     summary: Get posts by user id
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Posts by user
+ */
+router.get(
+  '/user/:id',
+  authMiddleware,
+  postController.getByUser.bind(postController),
+);
 
 /**
  * @swagger
@@ -58,7 +103,7 @@ router.get('/', authMiddleware, postController.get);
  *       404:
  *         description: Post not found
  */
-router.get('/:id', authMiddleware, postController.getById);
+router.get('/:id', authMiddleware, postController.getById.bind(postController));
 
 /**
  * @swagger
@@ -88,7 +133,12 @@ router.get('/:id', authMiddleware, postController.getById);
  *       400:
  *         description: Validation error
  */
-router.post('/', authMiddleware, uploadPostImage, postController.post);
+router.post(
+  '/',
+  authMiddleware,
+  uploadPostImage,
+  postController.post.bind(postController),
+);
 
 /**
  * @swagger
@@ -124,7 +174,12 @@ router.post('/', authMiddleware, uploadPostImage, postController.post);
  *       404:
  *         description: Post not found
  */
-router.put('/:id', authMiddleware, uploadPostImage, postController.put);
+router.put(
+  '/:id',
+  authMiddleware,
+  uploadPostImage,
+  postController.put.bind(postController),
+);
 
 /**
  * @swagger
@@ -148,7 +203,7 @@ router.put('/:id', authMiddleware, uploadPostImage, postController.put);
  *       404:
  *         description: Post not found
  */
-router.delete('/:id', authMiddleware, postController.del);
+router.delete('/:id', authMiddleware, postController.del.bind(postController));
 
 /**
  * @swagger
@@ -170,6 +225,10 @@ router.delete('/:id', authMiddleware, postController.del);
  *       404:
  *         description: Post not found
  */
-router.post('/:id/like', authMiddleware, postController.toggleLike.bind(postController));
+router.post(
+  '/:id/like',
+  authMiddleware,
+  postController.toggleLike.bind(postController),
+);
 
 export const postRoutes = router;

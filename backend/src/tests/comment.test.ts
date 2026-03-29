@@ -74,7 +74,7 @@ describe('Comment and Like Endpoints', () => {
   let postId: string;
 
   beforeAll(async () => {
-    if (mongoose.connection.readyState === 0) {
+    if (Number(mongoose.connection.readyState) === 0) {
       await mongoose.connect(DbConfig.mongoUri);
     }
   });
@@ -143,7 +143,9 @@ describe('Comment and Like Endpoints', () => {
       { content: 'second page comment', owner: ownerId, post: postId },
     ]);
 
-    const firstPageRes = await request(app).get(`/comments?postId=${postId}&limit=2`);
+    const firstPageRes = await request(app).get(
+      `/comments?postId=${postId}&limit=2`,
+    );
     const firstPageBody = firstPageRes.body as CommentsListResponse;
 
     expect(firstPageRes.status).toBe(200);
@@ -172,7 +174,7 @@ describe('Comment and Like Endpoints', () => {
     });
 
     const res = await request(app)
-      .delete(`/comments/${comment._id}`)
+      .delete(`/comments/${String(comment._id)}`)
       .set('Authorization', `Bearer ${ownerToken}`);
 
     const deletedComment = await Comment.findById(comment._id);
@@ -189,7 +191,7 @@ describe('Comment and Like Endpoints', () => {
     });
 
     const res = await request(app)
-      .delete(`/comments/${comment._id}`)
+      .delete(`/comments/${String(comment._id)}`)
       .set('Authorization', `Bearer ${otherToken}`);
 
     const existingComment = await Comment.findById(comment._id);

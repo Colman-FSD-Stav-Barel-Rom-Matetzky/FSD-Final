@@ -10,7 +10,7 @@
   gap: 2rem;
   margin-bottom: 2rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  border-bottom: 1px solid var(--bs-border-color, #e0e0e0);
 }
 
 .profileImageContainer {
@@ -98,7 +98,9 @@
 
 .formGroup input {
   padding: 0.5rem;
-  border: 1px solid var(--border-color, #ccc);
+  background-color: var(--bs-body-bg, #fff);
+  color: var(--bs-body-color, #000);
+  border: 1px solid var(--bs-border-color, #ccc);
   border-radius: 4px;
 }
 
@@ -119,7 +121,8 @@
 .cancelButton {
   padding: 0.5rem 1rem;
   background: transparent;
-  border: 1px solid var(--border-color, #ccc);
+  color: var(--bs-body-color, #000);
+  border: 1px solid var(--bs-border-color, #ccc);
   border-radius: 4px;
   cursor: pointer;
 }
@@ -135,10 +138,16 @@
 }
 
 .postCard {
-  border: 1px solid var(--border-color, #e0e0e0);
+  border: 1px solid var(--bs-border-color, #e0e0e0);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--bg-card, #fff);
+  background-color: var(--bs-body-bg, #fff);
+  color: var(--bs-body-color, #000);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition:
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .postImage {

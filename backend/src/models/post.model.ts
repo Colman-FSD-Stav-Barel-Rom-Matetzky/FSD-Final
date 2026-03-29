@@ -6,6 +6,7 @@ export interface IPost extends mongoose.Document {
   owner: mongoose.Types.ObjectId;
   likes: mongoose.Types.ObjectId[];
   createdAt: Date;
+  embedding?: number[];
 }
 
 const postSchema = new mongoose.Schema<IPost>(
@@ -23,6 +24,7 @@ const postSchema = new mongoose.Schema<IPost>(
         ref: 'user',
       },
     ],
+    embedding: { type: [Number], required: false },
   },
   { timestamps: true },
 );

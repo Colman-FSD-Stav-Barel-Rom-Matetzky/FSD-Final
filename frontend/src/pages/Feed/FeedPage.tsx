@@ -1,11 +1,16 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { FC } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAuth } from '../../hooks/useAuth';
 import { useFeed } from '../../hooks/useFeed';
 import { PostCard } from '../../components/PostCard/PostCard';
 import { PostModal } from '../../components/PostModal/PostModal';
+import { postService as altPostService } from '../../services/post.service';
 import type { Post } from '../../types/post.types';
+import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import PostAddRoundedIcon from '@mui/icons-material/PostAddRounded';
 import styles from './FeedPage.module.css';
 
 export const FeedPage: FC = () => {
@@ -14,7 +19,7 @@ export const FeedPage: FC = () => {
     posts,
     hasMore,
     fetchMore,
-    error,
+    error: feedError,
     updatePostLikes,
     addPost,
     updatePost,
@@ -22,12 +27,40 @@ export const FeedPage: FC = () => {
   } = useFeed();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const createModalKeyRef = useRef(0);
+  const [modalKey, setModalKey] = useState(0);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<Post[] | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   const openCreateModal = useCallback(() => {
-    createModalKeyRef.current += 1;
+    setModalKey((prev) => prev + 1);
     setShowCreateModal(true);
   }, []);
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    setIsSearching(true);
+    setSearchError(null);
+    try {
+      const results = await altPostService.searchPosts(searchQuery);
+      setSearchResults(results);
+    } catch (err) {
+      setSearchError('Search failed');
+      console.error(err);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchResults(null);
+    setSearchQuery('');
+    setSearchError(null);
+  };
 
   useEffect(() => {
     fetchMore();
@@ -35,6 +68,8 @@ export const FeedPage: FC = () => {
   }, []);
 
   if (!user) return null;
+
+  const error = feedError || searchError;
 
   return (
     <div className={styles.feedContainer}>
@@ -45,16 +80,19 @@ export const FeedPage: FC = () => {
       )}
 
       <button
-        className="btn btn-primary w-100 mb-3 py-2 fw-medium"
+        className={styles.fab}
         onClick={openCreateModal}
+        title="Create New Post"
       >
-        <i className="fas fa-plus me-2"></i>New Post
+        <PostAddRoundedIcon fontSize="large" />
+        <span className={styles.fabText}>Add Post</span>
       </button>
-
       <InfiniteScroll
-        dataLength={posts.length}
+        dataLength={
+          searchResults !== null ? searchResults.length : posts.length
+        }
         next={fetchMore}
-        hasMore={hasMore}
+        hasMore={searchResults !== null ? false : hasMore}
         loader={
           <div className="d-flex justify-content-center my-4">
             <div className="spinner-border" role="status">
@@ -72,7 +110,8 @@ export const FeedPage: FC = () => {
             display: 'flex',
             gap: '8px',
             position: 'relative',
-            width: '300px',
+            width: '100%',
+            marginBottom: '1.5rem',
           }}
         >
           <div style={{ position: 'relative', width: '100%' }}>
@@ -89,7 +128,7 @@ export const FeedPage: FC = () => {
             <input
               type="text"
               className="form-control"
-              placeholder="Smart Search..."
+              placeholder="Search Posts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               disabled={isSearching}
@@ -151,39 +190,19 @@ export const FeedPage: FC = () => {
             )}
           </button>
         </form>
-      </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+        {searchResults !== null && (
+          <div className="mb-3">
+            <h4 className="h5 text-muted">
+              Search Results ({searchResults.length})
+            </h4>
+            {searchResults.length === 0 && (
+              <p>No posts found matching your search.</p>
+            )}
+          </div>
+        )}
 
-      {searchResults !== null ? (
-        <div className="search-results">
-          <h4>Search Results ({searchResults.length})</h4>
-          {searchResults.length === 0 ? (
-            <p>No posts found matching your search.</p>
-          ) : (
-            <ul className="list-group">
-              {searchResults.map((post) => (
-                <li key={post._id} className="list-group-item">
-                  <p>{post.content}</p>
-                  <small className="text-muted">
-                    Author:{' '}
-                    {typeof post.author === 'object' &&
-                    post.author !== null &&
-                    'username' in post.author
-                      ? String(post.author.username)
-                      : String(post.author)}
-                  </small>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      ) : (
-        <div className="normal-feed">
-          <p>Normal feed posts will appear here...</p>
-        </div>
-      )}
-        {posts.map((post) => (
+        {(searchResults !== null ? searchResults : posts).map((post) => (
           <PostCard
             key={post._id}
             post={post}
@@ -196,7 +215,7 @@ export const FeedPage: FC = () => {
       </InfiniteScroll>
 
       <PostModal
-        key={createModalKeyRef.current}
+        key={modalKey}
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onSubmitted={(post: Post) => {
