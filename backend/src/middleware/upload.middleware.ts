@@ -1,54 +1,31 @@
-import multer from 'multer';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import multer from 'multer';
 
-// Ensure upload directories exist
-const createDirIfNotExists = (dir: string) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-};
+const uploadsDir = path.join(process.cwd(), 'uploads', 'posts');
 
-const profilesDir = path.join(__dirname, '../../uploads/profiles');
-const postsDir = path.join(__dirname, '../../uploads/posts');
-
-createDirIfNotExists(profilesDir);
-createDirIfNotExists(postsDir);
+fs.mkdirSync(uploadsDir, { recursive: true });
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Decide destination based on the route
-    if (req.baseUrl.includes('users')) {
-      cb(null, profilesDir);
-    } else if (req.baseUrl.includes('posts')) {
-      cb(null, postsDir);
-    } else {
-      cb(null, path.join(__dirname, '../../uploads'));
-    }
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir);
   },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+  filename: (_req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
-const fileFilter = (
-  req: any,
-  file: Express.Multer.File,
-  cb: multer.FileFilterCallback,
-) => {
-  // Accept only images
-  if (file.mimetype.startsWith('image/')) {
+const allowedMimeTypes = new Set(['image/jpeg', 'image/png', 'image/gif']);
+
+const fileFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
+  if (allowedMimeTypes.has(file.mimetype)) {
     cb(null, true);
-  } else {
-    cb(new Error('Not an image! Please upload only images.'));
+    return;
   }
+
+  cb(new Error('Only JPEG, PNG, and GIF image files are allowed'));
 };
 
-export const uploadMiddleware = multer({
-  storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
-  },
-  fileFilter,
-});
+const upload = multer({ storage, fileFilter });
+
+export const uploadPostImage = upload.single('image');
