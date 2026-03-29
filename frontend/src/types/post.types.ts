@@ -1,11 +1,20 @@
-import type { User } from './user.types';
+export type PostOwner = {
+  _id: string;
+  username: string;
+  profileImage?: string;
+};
 
-export interface Post {
+export type Post = {
   _id: string;
   content: string;
-  author: User;
-  images?: string[];
+  image?: string;
+  owner: PostOwner;
   likes: string[];
+  commentCount: number;
   createdAt: string;
-  updatedAt: string;
-}
+};
+
+export type FeedResponse = {
+  data: Post[];
+  nextCursor: string | null;
+};

@@ -1,43 +1,69 @@
-import { Router } from 'express';
+import express from 'express';
 import { postController } from '../controllers/post.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { uploadMiddleware } from '../middleware/upload.middleware';
+import { uploadPostImage } from '../middleware/upload.middleware';
 
-const router = Router();
+const router = express.Router();
 
 /**
  * @swagger
  * tags:
  *   name: Posts
- *   description: Post management API
+ *   description: Post CRUD operations
  */
 
 /**
  * @swagger
- * /posts/user/{userId}:
+ * /posts:
  *   get:
- *     summary: Get all posts by a specific user
+ *     summary: Get paginated posts feed
  *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: userId
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: lastId
  *         schema:
  *           type: string
- *         required: true
- *         description: The user ID
+ *         description: Cursor for the next page
  *     responses:
  *       200:
- *         description: A list of user's posts
- *       500:
- *         description: Internal Server Error
+ *         description: Posts fetched successfully
  */
-router.get('/user/:userId', postController.getByUserId.bind(postController));
+router.get('/', authMiddleware, postController.get);
+
+/**
+ * @swagger
+ * /posts/{id}:
+ *   get:
+ *     summary: Get a post by id
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Post fetched successfully
+ *       404:
+ *         description: Post not found
+ */
+router.get('/:id', authMiddleware, postController.getById);
 
 /**
  * @swagger
  * /posts:
  *   post:
- *     summary: Create a new post
+ *     summary: Create a post
  *     tags: [Posts]
  *     security:
  *       - bearerAuth: []
@@ -47,35 +73,102 @@ router.get('/user/:userId', postController.getByUserId.bind(postController));
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - content
  *             properties:
  *               content:
  *                 type: string
- *               images:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: binary
+ *               image:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       201:
- *         description: Created post
+ *         description: Post created successfully
  *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       500:
- *         description: Internal server error
+ *         description: Validation error
  */
-router.post(
-  '/',
-  authMiddleware,
-  uploadMiddleware.array('images', 5),
-  postController.createWithImages.bind(postController),
-);
+router.post('/', authMiddleware, uploadPostImage, postController.post);
 
-// We can map basic CRUD from BaseController
-router.get('/', postController.get.bind(postController));
-router.get('/:id', postController.getById.bind(postController));
-router.put('/:id', authMiddleware, postController.put.bind(postController));
-router.delete('/:id', authMiddleware, postController.del.bind(postController));
+/**
+ * @swagger
+ * /posts/{id}:
+ *   put:
+ *     summary: Update a post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Post updated successfully
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Post not found
+ */
+router.put('/:id', authMiddleware, uploadPostImage, postController.put);
 
-export default router;
+/**
+ * @swagger
+ * /posts/{id}:
+ *   delete:
+ *     summary: Delete a post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Post deleted successfully
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Post not found
+ */
+router.delete('/:id', authMiddleware, postController.del);
+
+/**
+ * @swagger
+ * /posts/{id}/like:
+ *   post:
+ *     summary: Toggle like on a post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Like toggled successfully
+ *       404:
+ *         description: Post not found
+ */
+router.post('/:id/like', authMiddleware, postController.toggleLike.bind(postController));
+
+export const postRoutes = router;
