@@ -3,7 +3,8 @@ import path from 'path';
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { BaseController } from './base.controller';
-import { IPost, Post } from '../models/post.model';
+import { Post, IPost } from '../models/post.model';
+import { aiService } from '../services/ai.service';
 
 const resolveImagePath = (imagePath: string) =>
   path.join(process.cwd(), imagePath.replace(/^\/+/, ''));
@@ -35,6 +36,42 @@ export class PostController extends BaseController<IPost> {
     this.post = this.post.bind(this);
     this.put = this.put.bind(this);
     this.del = this.del.bind(this);
+    this.toggleLike = this.toggleLike.bind(this);
+    this.searchPosts = this.searchPosts.bind(this);
+    this.getByUser = this.getByUser.bind(this);
+  }
+
+  async getByUser(req: Request, res: Response) {
+    try {
+      const posts = await Post.find({ owner: req.params.id })
+        .populate('owner', 'username profileImage')
+        .sort({ _id: -1 });
+      res.status(200).json({ data: posts });
+    } catch (error) {
+      res.status(500).json({
+        error:
+          error instanceof Error ? error.message : 'An unknown error occurred',
+      });
+    }
+  }
+
+  async getById(req: Request, res: Response) {
+    try {
+      const item = await this.model
+        .findById(req.params.id)
+        .populate('owner', 'username profileImage');
+
+      if (!item) {
+        res.status(404).json({ error: 'Resource not found' });
+        return;
+      }
+      res.status(200).json({ data: item });
+    } catch (error) {
+      res.status(500).json({
+        error:
+          error instanceof Error ? error.message : 'An unknown error occurred',
+      });
+    }
   }
 
   async get(req: Request, res: Response) {
@@ -56,7 +93,10 @@ export class PostController extends BaseController<IPost> {
         ? { _id: { $lt: new mongoose.Types.ObjectId(lastId) } }
         : {};
 
-      const posts = await Post.find(filter).sort({ _id: -1 }).limit(limit);
+      const posts = await Post.find(filter)
+        .populate('owner', 'username profileImage')
+        .sort({ _id: -1 })
+        .limit(limit);
       const lastPost = posts[posts.length - 1];
 
       res.status(200).json({
@@ -88,8 +128,10 @@ export class PostController extends BaseController<IPost> {
         return;
       }
 
-      const content =
-        typeof req.body.content === 'string' ? req.body.content.trim() : '';
+      const body = req.body as Record<string, unknown>;
+      const bodyContent = body.content;
+
+      const content = typeof bodyContent === 'string' ? bodyContent.trim() : '';
 
       if (!content) {
         if (uploadedImagePath) {
@@ -100,13 +142,22 @@ export class PostController extends BaseController<IPost> {
         return;
       }
 
-      req.body = {
+      const embedding = await aiService.generateEmbedding(content);
+
+      const postPayload = {
         content,
         owner: userId,
         ...(uploadedImagePath ? { image: uploadedImagePath } : {}),
+        embedding,
       };
 
-      await super.post(req, res);
+      const createdPost = await Post.create(postPayload);
+      const populatedPost = await createdPost.populate(
+        'owner',
+        'username profileImage',
+      );
+
+      res.status(201).json({ data: populatedPost });
     } catch (error) {
       if (uploadedImagePath) {
         await deleteImageIfExists(uploadedImagePath);
@@ -146,16 +197,20 @@ export class PostController extends BaseController<IPost> {
       }
 
       const previousImage = post.image;
+      const body = req.body as Record<string, unknown>;
 
-      if (typeof req.body.content === 'string') {
-        post.content = req.body.content.trim();
+      if (typeof body.content === 'string') {
+        post.content = body.content.trim();
       }
 
       if (uploadedImagePath) {
         post.image = uploadedImagePath;
       }
 
+      post.embedding = await aiService.generateEmbedding(post.content);
+
       await post.save();
+      await post.populate('owner', 'username profileImage');
 
       if (uploadedImagePath && previousImage && previousImage !== post.image) {
         await deleteImageIfExists(previousImage);
@@ -202,6 +257,62 @@ export class PostController extends BaseController<IPost> {
         error:
           error instanceof Error ? error.message : 'An unknown error occurred',
       });
+    }
+  }
+
+  async toggleLike(req: Request, res: Response) {
+    try {
+      const post = await this.model.findById(req.params.id);
+      if (!post) return res.status(404).json({ error: 'Post not found' });
+      const userId = getAuthenticatedUserId(req);
+      if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+      const likeIndex = post.likes.findIndex(
+        (id) => id.toString() === userId.toString(),
+      );
+      if (likeIndex === -1) {
+        post.likes.push(new mongoose.Types.ObjectId(userId));
+      } else {
+        post.likes.splice(likeIndex, 1);
+      }
+      await post.save();
+      res.status(200).json({ data: { likes: post.likes } });
+    } catch (error) {
+      res.status(500).json({
+        error:
+          error instanceof Error ? error.message : 'An unknown error occurred',
+      });
+    }
+  }
+
+  async searchPosts(req: Request, res: Response): Promise<void> {
+    try {
+      const q = req.query.q as string;
+      if (!q) {
+        res.status(400).json({ error: 'Query parameter "q" is required' });
+        return;
+      }
+
+      const queryVector = await aiService.generateEmbedding(q);
+      const allPosts = await this.model
+        .find()
+        .populate('owner', 'username profileImage');
+
+      const rankedPosts = allPosts
+        .map((post) => {
+          const score = aiService.cosineSimilarity(
+            queryVector,
+            post.embedding || [],
+          );
+          return { post, score };
+        })
+        .filter((rp) => rp.score >= 0.4) // Only keeps posts with decent semantic similarity
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 15)
+        .map((rp) => rp.post);
+
+      res.status(200).json({ data: rankedPosts });
+    } catch (_error) {
+      res.status(500).json({ error: 'Failed to search posts semantically' });
     }
   }
 }

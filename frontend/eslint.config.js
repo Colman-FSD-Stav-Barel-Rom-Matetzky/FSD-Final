@@ -28,4 +28,9 @@ export default tseslint.config(
     },
   },
   prettierRecommended,
+  {
+    rules: {
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
+    },
+  },
 );

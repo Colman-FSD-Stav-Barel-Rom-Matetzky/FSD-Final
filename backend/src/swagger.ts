@@ -33,19 +33,173 @@ const swaggerOptions = {
         },
         Post: {
           type: 'object',
+          required: ['_id', 'content', 'owner', 'likes', 'createdAt'],
           properties: {
-            _id: { type: 'string' },
-            content: { type: 'string' },
+            _id: {
+              type: 'string',
+              description: 'Unique post identifier',
+              example: '60d5ec49f1b2c8a1b4e1a123',
+            },
+            content: {
+              type: 'string',
+              description: 'Post text content',
+              example: 'Hello world!',
+            },
             image: {
               type: 'string',
-              description: 'Relative URL to image',
+              description: 'Relative URL to uploaded image',
+              example: '/uploads/posts/photo-123.jpg',
+              nullable: true,
             },
-            owner: { type: 'string' },
+            owner: {
+              type: 'string',
+              description: 'User ID of the post author',
+              example: '60d5ec49f1b2c8a1b4e1a456',
+            },
             likes: {
               type: 'array',
+              description: 'Array of user IDs who liked the post',
               items: { type: 'string' },
+              example: ['60d5ec49f1b2c8a1b4e1a456'],
             },
-            createdAt: { type: 'string', format: 'date-time' },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'ISO timestamp of creation',
+              example: '2023-06-25T12:00:00.000Z',
+            },
+          },
+        },
+        Comment: {
+          type: 'object',
+          required: ['_id', 'content', 'owner', 'post', 'createdAt'],
+          properties: {
+            _id: {
+              type: 'string',
+              description: 'Unique comment identifier',
+              example: '60d5ec49f1b2c8a1b4e1a789',
+            },
+            content: {
+              type: 'string',
+              description: 'Comment text content',
+              example: 'Great post!',
+            },
+            owner: {
+              type: 'string',
+              description: 'User ID of the comment author',
+              example: '60d5ec49f1b2c8a1b4e1a456',
+            },
+            post: {
+              type: 'string',
+              description: 'Post ID this comment belongs to',
+              example: '60d5ec49f1b2c8a1b4e1a123',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'ISO timestamp of creation',
+              example: '2023-06-25T12:05:00.000Z',
+            },
+          },
+        },
+        PaginatedPosts: {
+          type: 'object',
+          required: ['data', 'nextCursor'],
+          properties: {
+            data: {
+              type: 'array',
+              description: 'Array of posts for the current page',
+              items: { $ref: '#/components/schemas/Post' },
+            },
+            nextCursor: {
+              type: 'string',
+              description: 'Cursor ID for fetching the next page, or null if no more results',
+              nullable: true,
+              example: '60d5ec49f1b2c8a1b4e1a123',
+            },
+          },
+        },
+        PaginatedComments: {
+          type: 'object',
+          required: ['data', 'nextCursor'],
+          properties: {
+            data: {
+              type: 'array',
+              description: 'Array of comments for the current page',
+              items: { $ref: '#/components/schemas/Comment' },
+            },
+            nextCursor: {
+              type: 'string',
+              description: 'Cursor ID for fetching the next page, or null if no more results',
+              nullable: true,
+              example: '60d5ec49f1b2c8a1b4e1a789',
+            },
+          },
+        },
+      },
+      responses: {
+        UnauthorizedError: {
+          description: 'Authentication token is missing or invalid',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  error: {
+                    type: 'string',
+                    example: 'Unauthorized',
+                  },
+                },
+              },
+            },
+          },
+        },
+        ForbiddenError: {
+          description: 'Authenticated user does not have permission to perform this action',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  error: {
+                    type: 'string',
+                    example: 'Forbidden',
+                  },
+                },
+              },
+            },
+          },
+        },
+        NotFoundError: {
+          description: 'Requested resource was not found',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  error: {
+                    type: 'string',
+                    example: 'Resource not found',
+                  },
+                },
+              },
+            },
+          },
+        },
+        ValidationError: {
+          description: 'Request validation failed due to missing or invalid fields',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  error: {
+                    type: 'string',
+                    example: 'Content is required',
+                  },
+                },
+              },
+            },
           },
         },
       },
