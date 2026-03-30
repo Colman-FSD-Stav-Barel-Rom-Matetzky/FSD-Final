@@ -51,7 +51,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.get('/', commentController.get);
+router.get('/', commentController.get.bind(commentController));
 
 /**
  * @swagger
@@ -95,7 +95,11 @@ router.get('/', commentController.get);
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post('/', authMiddleware, commentController.post);
+router.post(
+  '/',
+  authMiddleware,
+  commentController.post.bind(commentController),
+);
 
 /**
  * @swagger
@@ -134,6 +138,10 @@ router.post('/', authMiddleware, commentController.post);
  *       404:
  *         $ref: '#/components/responses/NotFoundError'
  */
-router.delete('/:id', authMiddleware, commentController.del);
+router.delete(
+  '/:id',
+  authMiddleware,
+  commentController.del.bind(commentController),
+);
 
 export const commentRoutes = router;

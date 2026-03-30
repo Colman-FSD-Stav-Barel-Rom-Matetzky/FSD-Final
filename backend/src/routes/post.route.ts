@@ -50,7 +50,53 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.get('/', authMiddleware, postController.get);
+router.get('/', authMiddleware, postController.get.bind(postController));
+
+/**
+ * @swagger
+ * /posts/search:
+ *   get:
+ *     summary: Search posts semantically using AI
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Search results
+ */
+router.get(
+  '/search',
+  authMiddleware,
+  postController.searchPosts.bind(postController),
+);
+
+/**
+ * @swagger
+ * /posts/user/{id}:
+ *   get:
+ *     summary: Get posts by user id
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Posts by user
+ */
+router.get(
+  '/user/:id',
+  authMiddleware,
+  postController.getByUser.bind(postController),
+);
 
 /**
  * @swagger
@@ -83,7 +129,7 @@ router.get('/', authMiddleware, postController.get);
  *       404:
  *         $ref: '#/components/responses/NotFoundError'
  */
-router.get('/:id', authMiddleware, postController.getById);
+router.get('/:id', authMiddleware, postController.getById.bind(postController));
 
 /**
  * @swagger
@@ -126,7 +172,12 @@ router.get('/:id', authMiddleware, postController.getById);
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post('/', authMiddleware, uploadPostImage, postController.post);
+router.post(
+  '/',
+  authMiddleware,
+  uploadPostImage,
+  postController.post.bind(postController),
+);
 
 /**
  * @swagger
@@ -178,7 +229,12 @@ router.post('/', authMiddleware, uploadPostImage, postController.post);
  *       404:
  *         $ref: '#/components/responses/NotFoundError'
  */
-router.put('/:id', authMiddleware, uploadPostImage, postController.put);
+router.put(
+  '/:id',
+  authMiddleware,
+  uploadPostImage,
+  postController.put.bind(postController),
+);
 
 /**
  * @swagger
@@ -217,7 +273,7 @@ router.put('/:id', authMiddleware, uploadPostImage, postController.put);
  *       404:
  *         $ref: '#/components/responses/NotFoundError'
  */
-router.delete('/:id', authMiddleware, postController.del);
+router.delete('/:id', authMiddleware, postController.del.bind(postController));
 
 /**
  * @swagger
@@ -258,6 +314,10 @@ router.delete('/:id', authMiddleware, postController.del);
  *       500:
  *         description: Internal server error
  */
-router.post('/:id/like', authMiddleware, postController.toggleLike.bind(postController));
+router.post(
+  '/:id/like',
+  authMiddleware,
+  postController.toggleLike.bind(postController),
+);
 
 export const postRoutes = router;

@@ -55,7 +55,7 @@ export class BaseController<T> {
         req.params.id,
         req.body as UpdateQuery<T>,
         {
-          new: true,
+          returnDocument: 'after',
           runValidators: true,
         },
       );

@@ -119,7 +119,7 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username, password: { $exists: true } });
 
     if (!user || !user.password) {
       res.status(400).json({ error: 'Invalid credentials' });

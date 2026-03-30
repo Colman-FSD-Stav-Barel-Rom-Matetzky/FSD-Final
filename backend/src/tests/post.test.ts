@@ -76,7 +76,7 @@ describe('Post Endpoints', () => {
   let ownerId: string;
 
   beforeAll(async () => {
-    if (mongoose.connection.readyState === 0) {
+    if (Number(mongoose.connection.readyState) === 0) {
       await mongoose.connect(DbConfig.mongoUri);
     }
   });
@@ -178,7 +178,7 @@ describe('Post Endpoints', () => {
     const post = await Post.create({ content: 'single post', owner: ownerId });
 
     const res = await request(app)
-      .get(`/posts/${post._id}`)
+      .get(`/posts/${String(post._id)}`)
       .set('Authorization', `Bearer ${ownerToken}`);
 
     const body = res.body as PostResponse;
@@ -194,7 +194,7 @@ describe('Post Endpoints', () => {
     });
 
     const res = await request(app)
-      .put(`/posts/${post._id}`)
+      .put(`/posts/${String(post._id)}`)
       .set('Authorization', `Bearer ${ownerToken}`)
       .field('content', 'after update');
 
@@ -211,7 +211,7 @@ describe('Post Endpoints', () => {
     });
 
     const res = await request(app)
-      .put(`/posts/${post._id}`)
+      .put(`/posts/${String(post._id)}`)
       .set('Authorization', `Bearer ${otherToken}`)
       .field('content', 'unauthorized update');
 
@@ -222,7 +222,7 @@ describe('Post Endpoints', () => {
     const post = await Post.create({ content: 'delete me', owner: ownerId });
 
     const res = await request(app)
-      .delete(`/posts/${post._id}`)
+      .delete(`/posts/${String(post._id)}`)
       .set('Authorization', `Bearer ${ownerToken}`);
 
     const deletedPost = await Post.findById(post._id);
@@ -238,7 +238,7 @@ describe('Post Endpoints', () => {
     });
 
     const res = await request(app)
-      .delete(`/posts/${post._id}`)
+      .delete(`/posts/${String(post._id)}`)
       .set('Authorization', `Bearer ${otherToken}`);
 
     const existingPost = await Post.findById(post._id);
