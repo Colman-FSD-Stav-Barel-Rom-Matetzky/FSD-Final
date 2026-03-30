@@ -1,17 +1,17 @@
 🧑‍💻 Developer A: Infrastructure, Authentication, and AI
 This developer will focus on the core foundation of the app, security, and integrating the smart AI features.
 
-Server Setup: Configure the Express server using strictly TypeScript and connect it to a local MongoDB (must be secured with a username and password, no cloud services like Atlas).
+Done: Server Setup: Configure the Express server using strictly TypeScript and connect it to a local MongoDB (must be secured with a username and password, no cloud services like Atlas).
 
-Authentication API: Implement secure registration and login, including external providers (Google/Facebook) and a JWT mechanism with Refresh Tokens.
+Done: Authentication API: Implement secure registration and login, including external providers (Google/Facebook) and a JWT mechanism with Refresh Tokens.
 
-React Infrastructure: Set up the React project, routing, and global state management to remember the logged-in user.
+Done: React Infrastructure: Set up the React project, routing, and global state management to remember the logged-in user.
 
-Auth Screens UI: Build the login and registration screens, ensuring proper form input validation.
+Done: Auth Screens UI: Build the login and registration screens, ensuring proper form input validation.
 
-User Profile API & UI: Create the backend and frontend for the user profile screen. This includes displaying their details, fetching their specific posts, and allowing the logged-in user to edit their username and profile picture.
+Done: User Profile API & UI: Create the backend and frontend for the user profile screen. This includes displaying their details, fetching their specific posts, and allowing the logged-in user to edit their username and profile picture.
 
-AI Integration: Build the backend logic and frontend interface to intelligently analyze content or implement free-text search using an AI model (Gemini, ChatGPT, etc.), ensuring API rate limits are respected.
+Done: AI Integration: Build the backend logic and frontend interface to intelligently analyze content or implement free-text search using an AI model (Gemini, ChatGPT, etc.), ensuring API rate limits are respected.
 
 Auth & Profile Tests: Write Jest unit tests for all backend routes related to authentication and users.
 
