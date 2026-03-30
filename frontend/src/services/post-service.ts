@@ -62,20 +62,26 @@ export const postService = {
     return getWithAbort<FeedResponse>(`/posts?${params.toString()}`);
   },
 
+  getById: (postId: string) => {
+    return getWithAbort<{ data: Post }>(`/posts/${postId}`);
+  },
+
   toggleLike: (postId: string) => {
-    return postWithAbort<Post>(`/posts/${postId}/like`);
+    return postWithAbort<{ data: { likes: string[] } }>(
+      `/posts/${postId}/like`,
+    );
   },
 
   create: (formData: FormData) => {
-    return postFormDataWithAbort<Post>('/posts', formData);
+    return postFormDataWithAbort<{ data: Post }>('/posts', formData);
   },
 
   update: (postId: string, formData: FormData) => {
-    return putFormDataWithAbort<Post>(`/posts/${postId}`, formData);
+    return putFormDataWithAbort<{ data: Post }>(`/posts/${postId}`, formData);
   },
 
   remove: (postId: string) => {
-    return deleteWithAbort<Post>(`/posts/${postId}`);
+    return deleteWithAbort<{ data: { message: string } }>(`/posts/${postId}`);
   },
 };
 
