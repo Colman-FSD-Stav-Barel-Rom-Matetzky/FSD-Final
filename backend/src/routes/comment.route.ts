@@ -40,7 +40,7 @@ const router = express.Router();
  *       400:
  *         description: postId is required
  */
-router.get('/', commentController.get);
+router.get('/', commentController.get.bind(commentController));
 
 /**
  * @swagger
@@ -70,7 +70,11 @@ router.get('/', commentController.get);
  *       400:
  *         description: Validation error
  */
-router.post('/', authMiddleware, commentController.post);
+router.post(
+  '/',
+  authMiddleware,
+  commentController.post.bind(commentController),
+);
 
 /**
  * @swagger
@@ -94,6 +98,10 @@ router.post('/', authMiddleware, commentController.post);
  *       404:
  *         description: Comment not found
  */
-router.delete('/:id', authMiddleware, commentController.del);
+router.delete(
+  '/:id',
+  authMiddleware,
+  commentController.del.bind(commentController),
+);
 
 export const commentRoutes = router;

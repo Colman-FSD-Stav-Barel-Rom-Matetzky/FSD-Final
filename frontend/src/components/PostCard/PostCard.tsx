@@ -4,6 +4,7 @@ import { postService } from '../../services/post-service';
 import type { Post } from '../../types/post.types';
 import { PostModal } from '../PostModal/PostModal';
 import { DeleteConfirmModal } from '../DeleteConfirmModal/DeleteConfirmModal';
+import { ApiConfig } from '../../config/api.config';
 import styles from './PostCard.module.css';
 
 type PostCardProps = {
@@ -47,7 +48,7 @@ export const PostCard: FC<PostCardProps> = ({
     try {
       const { request } = postService.toggleLike(post._id);
       const response = await request;
-      onLikeToggled(post._id, response.data.likes);
+      onLikeToggled(post._id, response.data.data.likes);
     } catch {
       // Revert on failure
       onLikeToggled(post._id, previousLikes);
@@ -101,7 +102,11 @@ export const PostCard: FC<PostCardProps> = ({
           <div className="d-flex align-items-center gap-2 mb-2">
             {post.owner.profileImage ? (
               <img
-                src={post.owner.profileImage}
+                src={
+                  post.owner.profileImage.startsWith('http')
+                    ? post.owner.profileImage
+                    : `${ApiConfig.baseUrl}${post.owner.profileImage}`
+                }
                 alt={post.owner.username}
                 className={styles.avatar}
               />
@@ -164,7 +169,15 @@ export const PostCard: FC<PostCardProps> = ({
         </div>
 
         {post.image && (
-          <img src={post.image} alt="Post" className={styles.postImage} />
+          <img
+            src={
+              post.image.startsWith('http')
+                ? post.image
+                : `${ApiConfig.baseUrl}${post.image}`
+            }
+            alt="Post"
+            className={styles.postImage}
+          />
         )}
 
         <div className="card-body d-flex align-items-center gap-3 pt-2 pb-2">

@@ -67,7 +67,9 @@
   cursor: pointer;
   padding: 0.25rem;
   opacity: 0.6;
-  transition: opacity 0.2s, color 0.2s;
+  transition:
+    opacity 0.2s,
+    color 0.2s;
   font-size: 0.85rem;
   line-height: 1;
 }

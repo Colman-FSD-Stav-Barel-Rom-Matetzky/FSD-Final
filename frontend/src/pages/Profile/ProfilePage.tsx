@@ -179,9 +179,9 @@ export const ProfilePage: FC = () => {
           <div className={styles.postsGrid}>
             {posts.map((post) => (
               <div key={post._id} className={styles.postCard}>
-                {post.images && post.images.length > 0 && (
+                {post.image && (
                   <img
-                    src={`${ApiConfig.baseUrl}${post.images[0]}`}
+                    src={`${ApiConfig.baseUrl}${post.image}`}
                     alt="Post content"
                     className={styles.postImage}
                   />

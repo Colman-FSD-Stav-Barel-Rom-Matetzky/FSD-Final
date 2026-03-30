@@ -76,7 +76,7 @@ export const PostModal: FC<PostModalProps> = ({
         : postService.create(formData);
 
       const response = await request;
-      onSubmitted(response.data);
+      onSubmitted(response.data.data);
       onClose();
     } catch (error: unknown) {
       let message = 'Something went wrong. Please try again.';
