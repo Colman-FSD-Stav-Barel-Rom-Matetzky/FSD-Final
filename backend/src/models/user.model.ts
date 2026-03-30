@@ -22,4 +22,3 @@ export interface IUser extends mongoose.Document {
 }
 
 export const User = mongoose.model<IUser>('user', userSchema);
-

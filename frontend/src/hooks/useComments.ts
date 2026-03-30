@@ -24,7 +24,9 @@ export const useComments = (postId: string) => {
       .then((res) => {
         setComments((prev) => {
           const existingIds = new Set(prev.map((c) => c._id));
-          const newComments = res.data.data.filter((c) => !existingIds.has(c._id));
+          const newComments = res.data.data.filter(
+            (c) => !existingIds.has(c._id),
+          );
           return [...prev, ...newComments];
         });
         cursorRef.current = res.data.nextCursor;
@@ -33,7 +35,9 @@ export const useComments = (postId: string) => {
       })
       .catch((err) => {
         if (!(err instanceof CanceledError)) {
-          setError(err instanceof Error ? err.message : 'Failed to load comments');
+          setError(
+            err instanceof Error ? err.message : 'Failed to load comments',
+          );
           setIsLoading(false);
         }
       });
