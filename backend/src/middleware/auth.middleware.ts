@@ -16,6 +16,11 @@ export const authMiddleware = (
     return;
   }
 
+  if (!JwtConfig.secret) {
+    res.status(500).json({ error: 'JWT secret is not configured' });
+    return;
+  }
+
   try {
     const decoded = jwt.verify(token, JwtConfig.secret) as {
       _id: string;

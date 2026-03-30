@@ -1,0 +1,231 @@
+.sideMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: var(--bs-body-bg);
+  z-index: 1050;
+  transition: width 0.3s ease;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sideMenuCollapsed {
+  width: 80px;
+}
+
+.sideMenuOpen {
+  width: 280px;
+}
+
+.menuHeader {
+  padding: 1.25rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--bs-border-color-translucent);
+  height: 80px;
+}
+
+.sideMenuCollapsed .menuHeader {
+  justify-content: center;
+  padding: 1.25rem 0;
+}
+
+.hamburgerBtn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--bs-body-color);
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+}
+
+.menuHeader h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--bs-body-color);
+  white-space: nowrap;
+}
+
+.profileSection {
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid var(--bs-border-color-translucent);
+  background-color: var(--bs-secondary-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--bs-body-color);
+  transition: transform 0.2s ease;
+  width: 100%;
+}
+
+.profileLink:hover {
+  transform: scale(1.02);
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--bs-primary);
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.sideMenuOpen .avatar {
+  width: 80px;
+  height: 80px;
+  border-width: 3px;
+}
+
+.activeProfile .avatar {
+  box-shadow: 0 0 12px var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.username {
+  font-size: 1.25rem;
+  margin: 0;
+  font-weight: 600;
+  color: var(--bs-body-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.activeProfile .username {
+  color: var(--bs-primary);
+}
+
+.menuItems {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  overflow-y: auto;
+}
+
+.menuItem {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: var(--bs-body-color);
+  font-weight: 500;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+  border-left: 4px solid transparent;
+}
+
+.sideMenuCollapsed .menuItem {
+  justify-content: center;
+  padding: 1rem 0;
+  /* Adjust for border width so it stays perfectly centered */
+  padding-right: 4px;
+}
+
+.menuItem:hover {
+  background-color: var(--bs-secondary-bg);
+}
+
+.activeMenuItem {
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-primary);
+  border-left-color: var(--bs-primary);
+  font-weight: 600;
+}
+
+.activeMenuItem .menuIcon {
+  color: var(--bs-primary);
+}
+
+.menuIcon {
+  font-size: 1.5rem;
+  min-width: 40px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuText {
+  white-space: nowrap;
+}
+
+.bottomSection {
+  padding: 1rem;
+  border-top: 1px solid var(--bs-border-color-translucent);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.sideMenuOpen .bottomSection {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.themeToggleBtn {
+  margin: 0 auto;
+}
+
+.logoutBtn {
+  padding: 0.75rem;
+  background-color: var(--bs-danger);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.logoutBtn:hover {
+  background-color: #bb2d3b;
+}
+
+.sideMenuCollapsed .logoutBtn {
+  padding: 0.75rem 0;
+  background-color: transparent;
+  color: var(--bs-danger);
+}
+
+.sideMenuCollapsed .logoutBtn:hover {
+  background-color: transparent;
+  color: #bb2d3b;
+}
+
+@media (max-width: 768px) {
+  .sideMenu {
+    left: -300px;
+    width: 280px;
+  }
+  .sideMenuOpen {
+    left: 0;
+  }
+}
