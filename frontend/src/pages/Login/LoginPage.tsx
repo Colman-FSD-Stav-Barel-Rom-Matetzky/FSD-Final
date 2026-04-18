@@ -53,7 +53,7 @@ export const LoginPage: FC = () => {
     <div className={styles.loginContainer}>
       <div className={`card ${styles.loginCard} p-4`}>
         <div className="card-body">
-          <h2 className="text-center mb-4 text-primary fw-bold">SocialApp</h2>
+          <h2 className="text-center mb-4 text-primary fw-bold">Threadly</h2>
           <h5 className="text-center mb-4 text-muted">
             Sign in to your account
           </h5>

@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { postService } from '../../services/post-service';
 import type { Post } from '../../types/post.types';
+import { ApiConfig } from '../../config/api.config';
 import styles from './PostModal.module.css';
 
 const postSchema = z.object({
@@ -160,7 +161,14 @@ export const PostModal: FC<PostModalProps> = ({
 
               {previewUrl && (
                 <div className={styles.imagePreview}>
-                  <img src={previewUrl} alt="Preview" />
+                  <img
+                    src={
+                      previewUrl.startsWith('http') || previewUrl.startsWith('blob:')
+                        ? previewUrl
+                        : `${ApiConfig.baseUrl}${previewUrl}`
+                    }
+                    alt="Preview"
+                  />
                   <button
                     type="button"
                     className={styles.removeImageBtn}
