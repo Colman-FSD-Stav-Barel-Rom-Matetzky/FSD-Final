@@ -45,6 +45,7 @@ export class CommentController extends BaseController<IComment> {
         : { post: postId };
 
       const comments = await Comment.find(filter)
+        .populate('owner', 'username profileImage')
         .sort({ _id: -1 })
         .limit(limit);
       const lastComment = comments[comments.length - 1];
@@ -86,13 +87,15 @@ export class CommentController extends BaseController<IComment> {
       return;
     }
 
-    req.body = {
-      content,
-      post: postId,
-      owner: userId,
-    };
-
-    await super.post(req, res);
+    try {
+      const comment = await Comment.create({ content, post: postId, owner: userId });
+      await comment.populate('owner', 'username profileImage');
+      res.status(201).json({ data: comment });
+    } catch (error) {
+      res.status(400).json({
+        error: error instanceof Error ? error.message : 'An unknown error occurred',
+      });
+    }
   }
 
   async del(req: Request, res: Response) {
