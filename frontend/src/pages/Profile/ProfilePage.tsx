@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { userService } from '../../services/user.service';
 import { postService } from '../../services/post.service';
+import { PostCard } from '../../components/PostCard/PostCard';
 import type { User } from '../../types/user.types';
 import type { Post } from '../../types/post.types';
 import styles from './ProfilePage.module.css';
@@ -176,25 +177,28 @@ export const ProfilePage: FC = () => {
         {posts.length === 0 ? (
           <p>No posts yet.</p>
         ) : (
-          <div className={styles.postsGrid}>
-            {posts.map((post) => (
-              <div key={post._id} className={styles.postCard}>
-                {post.image && (
-                  <img
-                    src={`${ApiConfig.baseUrl}${post.image}`}
-                    alt="Post content"
-                    className={styles.postImage}
-                  />
-                )}
-                <div className={styles.postContent}>
-                  <p>{post.content}</p>
-                  <div className={styles.postDate}>
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          posts.map((post) => (
+            <PostCard
+              key={post._id}
+              post={post}
+              currentUserId={currentUser!._id}
+              onLikeToggled={(postId, updatedLikes) =>
+                setPosts((prev) =>
+                  prev.map((p) =>
+                    p._id === postId ? { ...p, likes: updatedLikes } : p,
+                  ),
+                )
+              }
+              onPostUpdated={(updated) =>
+                setPosts((prev) =>
+                  prev.map((p) => (p._id === updated._id ? updated : p)),
+                )
+              }
+              onPostDeleted={(postId) =>
+                setPosts((prev) => prev.filter((p) => p._id !== postId))
+              }
+            />
+          ))
         )}
       </div>
     </div>

@@ -1,4 +1,4 @@
-# Product Requirements Document — SocialApp
+# Product Requirements Document — Threadly
 
 > University Final Project · 2 Students · Deadline: 2–4 weeks
 
@@ -6,7 +6,7 @@
 
 ## 1. Executive Summary
 
-SocialApp is a full-stack social media platform built for a university final project. It enables registered users to share posts (text + image), interact with other users' content through comments and likes, and discover content using AI-powered natural language search.
+Threadly is a full-stack social media platform built for a university final project. It enables registered users to share posts (text + image), interact with other users' content through comments and likes, and discover content using AI-powered natural language search.
 
 The platform is built with Node.js/Express (TypeScript) on the backend and React/TypeScript/Vite on the frontend. It uses local MongoDB, JWT authentication with refresh tokens, and Google OAuth as a social login provider. All images are stored on the server filesystem. The application is deployed to the college server with HTTPS and runs persistently via PM2.
 
@@ -43,7 +43,7 @@ The platform is built with Node.js/Express (TypeScript) on the backend and React
 - Still needs a registered account (no anonymous browsing required by the assignment).
 
 ### Key User Needs
-| Need | How SocialApp Addresses It |
+| Need | How Threadly Addresses It |
 |---|---|
 | Share content easily | Simple post creation form (text + image upload) |
 | Find relevant content | AI-powered free-text search |
@@ -420,7 +420,7 @@ front_b/
 
 ```env
 PORT=4040
-MONGO_URI=mongodb://username:password@localhost:27017/socialapp
+MONGO_URI=mongodb://username:password@localhost:27017/Threadly
 JWT_SECRET=<secret>
 JWT_REFRESH_SECRET=<secret>
 ACCESS_TOKEN_EXPIRY=15m

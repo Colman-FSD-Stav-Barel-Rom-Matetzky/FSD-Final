@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'socialapp-backend',
+      name: 'Threadly-backend',
       script: 'dist/server.js',
       env: {
         NODE_ENV: 'development',

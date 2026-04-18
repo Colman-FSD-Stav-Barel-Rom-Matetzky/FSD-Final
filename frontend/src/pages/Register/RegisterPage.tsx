@@ -64,7 +64,7 @@ export const RegisterPage: FC = () => {
     <div className={styles.registerContainer}>
       <div className={`card ${styles.registerCard} p-4`}>
         <div className="card-body">
-          <h2 className="text-center mb-4 text-primary fw-bold">SocialApp</h2>
+          <h2 className="text-center mb-4 text-primary fw-bold">Threadly</h2>
           <h5 className="text-center mb-4 text-muted">Create an account</h5>
 
           {serverError && (

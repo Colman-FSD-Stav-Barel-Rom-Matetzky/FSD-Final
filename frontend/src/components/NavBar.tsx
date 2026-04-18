@@ -58,7 +58,7 @@ export const NavBar: FC = () => {
         >
           <span className="material-icons-round">menu</span>
         </button>
-        {isOpen && <h2>SocialApp</h2>}
+        {isOpen && <h2>Threadly</h2>}
       </div>
 
       <div className={styles.profileSection}>
