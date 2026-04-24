@@ -16,8 +16,18 @@ export const App: FC = () => {
 
   return (
     <BrowserRouter>
-      {/* Dynamic style tag to push main content when sidebar is open */}
       <style>{`
+        :root {
+          --sidebar-width: 80px;
+        }
+        body.sidebar-open {
+          --sidebar-width: 280px;
+        }
+        @media (max-width: 768px) {
+          :root, body.sidebar-open {
+            --sidebar-width: 0px;
+          }
+        }
         #root {
           display: flex;
           flex-direction: column;
@@ -25,19 +35,8 @@ export const App: FC = () => {
         }
         .main-content-layout {
           flex: 1;
-          margin-left: 80px;
+          margin-left: var(--sidebar-width);
           transition: margin-left 0.3s ease;
-        }
-        body.sidebar-open .main-content-layout {
-          margin-left: 280px;
-        }
-        @media (max-width: 768px) {
-          .main-content-layout {
-            margin-left: 0;
-          }
-          body.sidebar-open .main-content-layout {
-            margin-left: 0;
-          }
         }
       `}</style>
 

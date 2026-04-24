@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { BaseController } from './base.controller';
 import { Post, IPost } from '../models/post.model';
+import { Comment } from '../models/comment.model';
 import { aiService } from '../services/ai.service';
 
 const resolveImagePath = (imagePath: string) =>
@@ -28,6 +29,42 @@ const deleteImageIfExists = async (imagePath?: string) => {
   }
 };
 
+type PostWithCommentCount = IPost & { commentCount: number };
+
+const attachCommentCounts = async (
+  posts: IPost | IPost[],
+): Promise<PostWithCommentCount | PostWithCommentCount[] | null> => {
+  const isArray = Array.isArray(posts);
+  const postsArray = isArray ? posts : [posts];
+
+  if (postsArray.length === 0) return isArray ? [] : null;
+
+  const postIds = postsArray.map((p) => p._id);
+  const commentCounts = await Comment.aggregate<{
+    _id: mongoose.Types.ObjectId;
+    count: number;
+  }>([
+    { $match: { post: { $in: postIds } } },
+    { $group: { _id: '$post', count: { $sum: 1 } } },
+  ]);
+
+  const countMap = new Map<string, number>(
+    commentCounts.map((c) => [c._id.toString(), c.count]),
+  );
+
+  const postsWithCounts = postsArray.map((post) => {
+    const p = (
+      typeof post.toObject === 'function' ? post.toObject() : { ...post }
+    ) as PostWithCommentCount;
+
+    p.commentCount = countMap.get(p._id.toString()) || 0;
+
+    return p;
+  });
+
+  return isArray ? postsWithCounts : postsWithCounts[0];
+};
+
 export class PostController extends BaseController<IPost> {
   constructor() {
     super(Post);
@@ -46,7 +83,8 @@ export class PostController extends BaseController<IPost> {
       const posts = await Post.find({ owner: req.params.id })
         .populate('owner', 'username profileImage')
         .sort({ _id: -1 });
-      res.status(200).json({ data: posts });
+      const postsWithCounts = await attachCommentCounts(posts);
+      res.status(200).json({ data: postsWithCounts });
     } catch (error) {
       res.status(500).json({
         error:
@@ -65,7 +103,9 @@ export class PostController extends BaseController<IPost> {
         res.status(404).json({ error: 'Resource not found' });
         return;
       }
-      res.status(200).json({ data: item });
+
+      const itemWithCount = await attachCommentCounts(item);
+      res.status(200).json({ data: itemWithCount });
     } catch (error) {
       res.status(500).json({
         error:
@@ -99,8 +139,10 @@ export class PostController extends BaseController<IPost> {
         .limit(limit);
       const lastPost = posts[posts.length - 1];
 
+      const postsWithCounts = await attachCommentCounts(posts);
+
       res.status(200).json({
-        data: posts,
+        data: postsWithCounts,
         nextCursor: lastPost ? lastPost._id : null,
       });
     } catch (error) {
@@ -157,7 +199,8 @@ export class PostController extends BaseController<IPost> {
         'username profileImage',
       );
 
-      res.status(201).json({ data: populatedPost });
+      const postWithCount = await attachCommentCounts(populatedPost);
+      res.status(201).json({ data: postWithCount });
     } catch (error) {
       if (uploadedImagePath) {
         await deleteImageIfExists(uploadedImagePath);
@@ -216,7 +259,8 @@ export class PostController extends BaseController<IPost> {
         await deleteImageIfExists(previousImage);
       }
 
-      res.status(200).json({ data: post });
+      const postWithCount = await attachCommentCounts(post);
+      res.status(200).json({ data: postWithCount });
     } catch (error) {
       if (uploadedImagePath) {
         await deleteImageIfExists(uploadedImagePath);
@@ -310,7 +354,8 @@ export class PostController extends BaseController<IPost> {
         .slice(0, 15)
         .map((rp) => rp.post);
 
-      res.status(200).json({ data: rankedPosts });
+      const postsWithCounts = await attachCommentCounts(rankedPosts);
+      res.status(200).json({ data: postsWithCounts });
     } catch (_error) {
       res.status(500).json({ error: 'Failed to search posts semantically' });
     }

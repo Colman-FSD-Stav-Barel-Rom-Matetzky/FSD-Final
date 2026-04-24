@@ -5,10 +5,10 @@ import { useAuth } from '../../hooks/useAuth';
 import { userService } from '../../services/user.service';
 import { postService } from '../../services/post.service';
 import { PostCard } from '../../components/PostCard/PostCard';
+import { Avatar } from '../../components/Avatar/Avatar';
 import type { User } from '../../types/user.types';
 import type { Post } from '../../types/post.types';
 import styles from './ProfilePage.module.css';
-import { ApiConfig } from '../../config/api.config';
 
 export const ProfilePage: FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -89,17 +89,12 @@ export const ProfilePage: FC = () => {
     <div className={styles.profileContainer}>
       <div className={styles.profileHeader}>
         <div className={styles.profileImageContainer}>
-          <img
-            src={
-              imagePreview ||
-              (profileUser.profileImage
-                ? profileUser.profileImage.startsWith('http')
-                  ? profileUser.profileImage
-                  : `${ApiConfig.baseUrl}${profileUser.profileImage}`
-                : '/default-avatar.svg')
-            }
-            alt={`${profileUser.username}'s profile`}
+          <Avatar
+            src={imagePreview || profileUser.profileImage}
+            alt={profileUser.username}
             className={styles.profileImage}
+            placeholderBg="var(--bs-primary)"
+            fontSize="4rem"
           />
           {isEditing && (
             <label className={styles.editImageLabel}>
