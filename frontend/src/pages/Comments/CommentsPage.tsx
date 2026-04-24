@@ -56,6 +56,7 @@ export const CommentsPage: FC = () => {
       const { request } = commentService.create(postId, newComment.trim());
       const res = await request;
       addComment(res.data.data);
+      setPost((p) => (p ? { ...p, commentCount: p.commentCount + 1 } : p));
       setNewComment('');
     } catch {
       // Could show inline error if needed
@@ -64,11 +65,17 @@ export const CommentsPage: FC = () => {
     }
   };
 
+  const handleRemoveComment = (commentId: string) => {
+    removeComment(commentId);
+    setPost((p) =>
+      p ? { ...p, commentCount: Math.max(0, p.commentCount - 1) } : p,
+    );
+  };
+
   if (!user) return null;
 
   return (
     <div>
-      {/* Sticky header */}
       <div className={styles.header}>
         <button
           className={styles.backBtn}
@@ -87,7 +94,6 @@ export const CommentsPage: FC = () => {
           </div>
         )}
 
-        {/* Original post */}
         {postLoading && (
           <div className="text-center py-4">
             <div className="spinner-border" role="status">
@@ -109,7 +115,6 @@ export const CommentsPage: FC = () => {
 
         <hr className="my-2" />
 
-        {/* Comments infinite scroll */}
         <InfiniteScroll
           dataLength={comments.length}
           next={fetchMore}
@@ -134,13 +139,12 @@ export const CommentsPage: FC = () => {
               key={comment._id}
               comment={comment}
               currentUserId={user._id}
-              onDeleted={removeComment}
+              onDeleted={handleRemoveComment}
             />
           ))}
         </InfiniteScroll>
       </div>
 
-      {/* Pinned comment input */}
       <div className={styles.commentInput}>
         <input
           type="text"

@@ -1,11 +1,13 @@
 import { useState, useRef, useCallback, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { timeAgo } from '../../utils/date.utils';
 import { postService } from '../../services/post-service';
 import type { Post } from '../../types/post.types';
 import { PostModal } from '../PostModal/PostModal';
 import { DeleteConfirmModal } from '../DeleteConfirmModal/DeleteConfirmModal';
-import { ApiConfig } from '../../config/api.config';
+import { Avatar } from '../Avatar/Avatar';
 import styles from './PostCard.module.css';
+import { ApiConfig } from '../../config/api.config';
 
 type PostCardProps = {
   post: Post;
@@ -78,43 +80,18 @@ export const PostCard: FC<PostCardProps> = ({
     navigate(`/posts/${post._id}/comments`);
   };
 
-  const timeAgo = (dateStr: string): string => {
-    const now = new Date();
-    const date = new Date(dateStr);
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (seconds < 60) return 'just now';
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    if (days < 30) return `${days}d ago`;
-    const months = Math.floor(days / 30);
-    if (months < 12) return `${months}mo ago`;
-    return `${Math.floor(months / 12)}y ago`;
-  };
-
   return (
     <>
       <div className="card mb-3">
         <div className="card-body">
           <div className="d-flex align-items-center gap-2 mb-2">
-            {post.owner.profileImage ? (
-              <img
-                src={
-                  post.owner.profileImage.startsWith('http')
-                    ? post.owner.profileImage
-                    : `${ApiConfig.baseUrl}${post.owner.profileImage}`
-                }
-                alt={post.owner.username}
-                className={styles.avatar}
-              />
-            ) : (
-              <div className={styles.avatarPlaceholder}>
-                {post.owner.username.charAt(0).toUpperCase()}
-              </div>
-            )}
+            <Avatar
+              src={post.owner.profileImage}
+              alt={post.owner.username}
+              size={40}
+              placeholderBg="var(--bs-secondary)"
+              fontSize="1rem"
+            />
             <div className="flex-grow-1">
               <strong style={{ color: 'var(--bs-body-color)' }}>
                 {post.owner.username}
@@ -191,7 +168,7 @@ export const PostCard: FC<PostCardProps> = ({
             ) : (
               <i className="far fa-heart"></i>
             )}
-            <span>{post.likes.length > 0 ? post.likes.length : ''}</span>
+            <span>{post.likes.length}</span>
           </button>
 
           <button
@@ -200,7 +177,7 @@ export const PostCard: FC<PostCardProps> = ({
             aria-label="Comments"
           >
             <i className="far fa-comment"></i>
-            <span>{post.commentCount > 0 ? post.commentCount : ''}</span>
+            <span>{post.commentCount}</span>
           </button>
         </div>
       </div>

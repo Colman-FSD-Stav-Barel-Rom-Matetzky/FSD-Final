@@ -2,7 +2,7 @@ import { useState, type FC, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { ThemeToggle } from './ThemeToggle';
-import { ApiConfig } from '../config/api.config';
+import { Avatar } from './Avatar/Avatar';
 import styles from './NavBar.module.css';
 
 export const NavBar: FC = () => {
@@ -33,12 +33,6 @@ export const NavBar: FC = () => {
     setIsOpen(!isOpen);
   };
 
-  const getProfileImageUrl = (imagePath?: string) => {
-    if (!imagePath) return '/default-avatar.svg';
-    if (imagePath.startsWith('http')) return imagePath;
-    return `${ApiConfig.baseUrl}${imagePath}`;
-  };
-
   if (!user) {
     return null;
   }
@@ -66,10 +60,11 @@ export const NavBar: FC = () => {
           to={`/profile/${user._id}`}
           className={`${styles.profileLink} ${isProfileActive ? styles.activeProfile : ''}`}
         >
-          <img
-            src={getProfileImageUrl(user.profileImage)}
+          <Avatar
+            src={user.profileImage}
             alt={user.username}
             className={styles.avatar}
+            placeholderBg="var(--bs-primary)"
           />
           {isOpen && <h5 className={styles.username}>{user.username}</h5>}
         </Link>
