@@ -20,7 +20,7 @@ type CommentResponse = {
   data: {
     _id: string;
     content: string;
-    owner: string;
+    owner: { _id: string; username: string };
     post: string;
   };
   error?: string;
@@ -117,7 +117,7 @@ describe('Comment and Like Endpoints', () => {
     expect(res.status).toBe(201);
     expect(body.data.content).toBe('hello');
     expect(body.data.post).toBe(postId);
-    expect(body.data.owner).toBe(ownerId);
+    expect(body.data.owner._id).toBe(ownerId);
   });
 
   it('should get first page of comments with nextCursor', async () => {
