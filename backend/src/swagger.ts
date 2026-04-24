@@ -52,15 +52,28 @@ const swaggerOptions = {
               nullable: true,
             },
             owner: {
-              type: 'string',
-              description: 'User ID of the post author',
-              example: '60d5ec49f1b2c8a1b4e1a456',
+              type: 'object',
+              description: 'Details of the post author',
+              properties: {
+                _id: { type: 'string', example: '60d5ec49f1b2c8a1b4e1a456' },
+                username: { type: 'string', example: 'testuser' },
+                profileImage: {
+                  type: 'string',
+                  example: '/uploads/profiles/photo-123.jpg',
+                  nullable: true,
+                },
+              },
             },
             likes: {
               type: 'array',
               description: 'Array of user IDs who liked the post',
               items: { type: 'string' },
               example: ['60d5ec49f1b2c8a1b4e1a456'],
+            },
+            commentCount: {
+              type: 'integer',
+              description: 'Number of comments on the post',
+              example: 5,
             },
             createdAt: {
               type: 'string',
@@ -85,9 +98,17 @@ const swaggerOptions = {
               example: 'Great post!',
             },
             owner: {
-              type: 'string',
-              description: 'User ID of the comment author',
-              example: '60d5ec49f1b2c8a1b4e1a456',
+              type: 'object',
+              description: 'Details of the comment author',
+              properties: {
+                _id: { type: 'string', example: '60d5ec49f1b2c8a1b4e1a456' },
+                username: { type: 'string', example: 'testuser' },
+                profileImage: {
+                  type: 'string',
+                  example: '/uploads/profiles/photo-123.jpg',
+                  nullable: true,
+                },
+              },
             },
             post: {
               type: 'string',
@@ -113,7 +134,8 @@ const swaggerOptions = {
             },
             nextCursor: {
               type: 'string',
-              description: 'Cursor ID for fetching the next page, or null if no more results',
+              description:
+                'Cursor ID for fetching the next page, or null if no more results',
               nullable: true,
               example: '60d5ec49f1b2c8a1b4e1a123',
             },
@@ -130,7 +152,8 @@ const swaggerOptions = {
             },
             nextCursor: {
               type: 'string',
-              description: 'Cursor ID for fetching the next page, or null if no more results',
+              description:
+                'Cursor ID for fetching the next page, or null if no more results',
               nullable: true,
               example: '60d5ec49f1b2c8a1b4e1a789',
             },
@@ -155,7 +178,8 @@ const swaggerOptions = {
           },
         },
         ForbiddenError: {
-          description: 'Authenticated user does not have permission to perform this action',
+          description:
+            'Authenticated user does not have permission to perform this action',
           content: {
             'application/json': {
               schema: {
@@ -187,7 +211,8 @@ const swaggerOptions = {
           },
         },
         ValidationError: {
-          description: 'Request validation failed due to missing or invalid fields',
+          description:
+            'Request validation failed due to missing or invalid fields',
           content: {
             'application/json': {
               schema: {
@@ -210,7 +235,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./src/routes/*.ts'],
+  apis: ['./src/routes/*.ts', './src/app.ts'],
 };
 
 export const swaggerSpec = swaggerJsDoc(swaggerOptions);

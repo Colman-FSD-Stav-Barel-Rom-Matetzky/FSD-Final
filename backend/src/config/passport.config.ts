@@ -35,9 +35,21 @@ passport.use(
             user = await User.create({
               email,
               username,
-              profileImage: profile.photos?.[0].value,
+              profileImage: profile.photos?.[0]?.value,
               isGoogleUser: true,
             });
+          } else {
+            if (profile.photos?.[0]?.value && !user.profileImage) {
+              user.profileImage = profile.photos[0].value;
+              await user.save();
+            } else if (
+              profile.photos?.[0]?.value &&
+              user.isGoogleUser &&
+              user.profileImage !== profile.photos[0].value
+            ) {
+              user.profileImage = profile.photos[0].value;
+              await user.save();
+            }
           }
 
           return done(null, user as Express.User);
