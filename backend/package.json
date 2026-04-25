@@ -36,9 +36,7 @@
     "swagger-ui-express": "^5.0.1",
     "pm2": "^6.0.14",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
-  },
-  "devDependencies": {
+    "typescript": "^5.9.3",
     "@eslint/js": "^10.0.1",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
@@ -52,7 +50,9 @@
     "@types/passport-google-oauth20": "^2.0.17",
     "@types/supertest": "^7.2.0",
     "@types/swagger-jsdoc": "^6.0.4",
-    "@types/swagger-ui-express": "^4.1.8",
+    "@types/swagger-ui-express": "^4.1.8"
+  },
+  "devDependencies": {
     "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
