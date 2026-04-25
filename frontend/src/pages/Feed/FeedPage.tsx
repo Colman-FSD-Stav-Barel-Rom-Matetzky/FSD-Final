@@ -34,6 +34,38 @@ export const FeedPage: FC = () => {
   const [searchResults, setSearchResults] = useState<Post[] | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
 
+  const handleLikeToggled = useCallback(
+    (postId: string, likes: string[]) => {
+      updatePostLikes(postId, likes);
+      setSearchResults((prev) =>
+        prev ? prev.map((p) => (p._id === postId ? { ...p, likes } : p)) : prev,
+      );
+    },
+    [updatePostLikes],
+  );
+
+  const handlePostUpdated = useCallback(
+    (updatedPost: Post) => {
+      updatePost(updatedPost);
+      setSearchResults((prev) =>
+        prev
+          ? prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
+          : prev,
+      );
+    },
+    [updatePost],
+  );
+
+  const handlePostDeleted = useCallback(
+    (postId: string) => {
+      removePost(postId);
+      setSearchResults((prev) =>
+        prev ? prev.filter((p) => p._id !== postId) : prev,
+      );
+    },
+    [removePost],
+  );
+
   const openCreateModal = useCallback(() => {
     setModalKey((prev) => prev + 1);
     setShowCreateModal(true);
@@ -207,9 +239,9 @@ export const FeedPage: FC = () => {
             key={post._id}
             post={post}
             currentUserId={user._id}
-            onLikeToggled={updatePostLikes}
-            onPostUpdated={updatePost}
-            onPostDeleted={removePost}
+            onLikeToggled={handleLikeToggled}
+            onPostUpdated={handlePostUpdated}
+            onPostDeleted={handlePostDeleted}
           />
         ))}
       </InfiniteScroll>
