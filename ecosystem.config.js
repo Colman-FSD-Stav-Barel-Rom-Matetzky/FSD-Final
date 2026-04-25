@@ -2,7 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'Backend',
-      script: './backend/dist/server.js',
+      script: './dist/server.js',
+      cwd: './backend',
       env: {
         NODE_ENV: 'production',
       },
@@ -13,9 +14,10 @@ module.exports = {
     {
       name: 'Frontend',
       script: 'serve',
+      cwd: './frontend',
       env: {
         NODE_ENV: 'production',
-        PM2_SERVE_PATH: './frontend/dist',
+        PM2_SERVE_PATH: './dist',
         PM2_SERVE_PORT: '80',
         PM2_SERVE_SPA: 'true',
         PM2_SERVE_HOMEPAGE: '/index.html',
