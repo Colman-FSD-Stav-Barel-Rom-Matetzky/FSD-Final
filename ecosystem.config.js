@@ -13,7 +13,7 @@ module.exports = {
     },
     {
       name: 'Frontend',
-      script: './frontend/serve-https.js',
+      script: './serve-https.js',
       cwd: './frontend',
       env: {
         NODE_ENV: 'production',
