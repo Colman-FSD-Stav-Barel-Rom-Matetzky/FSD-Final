@@ -19,6 +19,7 @@ const refreshState = {
 
 export const apiClient = axios.create({
   baseURL: ApiConfig.baseUrl,
+  withCredentials: true,
 });
 
 const processQueue = (token: string) => {

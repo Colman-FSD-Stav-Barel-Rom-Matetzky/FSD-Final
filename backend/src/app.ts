@@ -9,10 +9,17 @@ import { commentRoutes } from './routes/comment.route';
 import { DbConfig } from './config/db.config';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger';
+import { AppConfig } from './config/app.config';
 
 export const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: AppConfig.clientUrl,
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
