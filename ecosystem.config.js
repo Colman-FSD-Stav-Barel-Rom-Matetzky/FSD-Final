@@ -13,14 +13,9 @@ module.exports = {
     },
     {
       name: 'Frontend',
-      script: 'serve',
-      cwd: './frontend',
+      script: './frontend/serve-https.js',
       env: {
         NODE_ENV: 'production',
-        PM2_SERVE_PATH: './dist',
-        PM2_SERVE_PORT: '80',
-        PM2_SERVE_SPA: 'true',
-        PM2_SERVE_HOMEPAGE: '/index.html',
       },
       env_production: {
         NODE_ENV: 'production',
