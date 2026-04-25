@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "lint:fix": "eslint . --fix",
-    "prod": "npm run build && pm2 restart ecosystem.config.js --env production"
+    "prod": "npm run build && pm2 restart ../ecosystem.config.js --env production"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

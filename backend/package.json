@@ -14,7 +14,7 @@
     "testauth": "jest src/tests/auth.test.ts",
     "testpost": "jest src/tests/post.test.ts",
     "testcomment": "jest src/tests/comment.test.ts",
-    "prod": "npm run build && pm2 restart ecosystem.config.js --env production"
+    "prod": "npm run build && pm2 restart ../ecosystem.config.js --env production"
   },
   "keywords": [],
   "author": "",
