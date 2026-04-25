@@ -48,6 +48,12 @@ app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', message: 'Server is running' });
 });
 
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDist));
+app.get('*', (_req: Request, res: Response) => {
+  res.sendFile(path.join(frontendDist, 'index.html'));
+});
+
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Error:', err.message);
   res.status(500).json({ error: 'Internal Server Error' });
