@@ -26,7 +26,7 @@ export const CommentItem: FC<CommentItemProps> = ({
       await request;
       onDeleted(comment._id);
     } catch {
-      // Could show inline error, keeping it simple for comments
+      alert('Failed to delete comment');
     } finally {
       setIsDeleting(false);
     }

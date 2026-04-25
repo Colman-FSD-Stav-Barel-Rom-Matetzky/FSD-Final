@@ -163,7 +163,8 @@ export const PostModal: FC<PostModalProps> = ({
                 <div className={styles.imagePreview}>
                   <img
                     src={
-                      previewUrl.startsWith('http') || previewUrl.startsWith('blob:')
+                      previewUrl.startsWith('http') ||
+                      previewUrl.startsWith('blob:')
                         ? previewUrl
                         : `${ApiConfig.baseUrl}${previewUrl}`
                     }

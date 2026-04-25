@@ -349,7 +349,7 @@ export class PostController extends BaseController<IPost> {
           );
           return { post, score };
         })
-        .filter((rp) => rp.score >= 0.4) // Only keeps posts with decent semantic similarity
+        .filter((rp) => rp.score >= 0.4)
         .sort((a, b) => b.score - a.score)
         .slice(0, 15)
         .map((rp) => rp.post);

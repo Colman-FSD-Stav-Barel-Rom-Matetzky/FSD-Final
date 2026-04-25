@@ -17,7 +17,7 @@
   right: 2rem;
   height: 65px;
   min-width: 65px;
-  padding: 0 15px; /* Enough padding to center the icon perfectly if no text */
+  padding: 0 15px;
   border-radius: 35px;
   background: linear-gradient(135deg, var(--bs-primary) 0%, #0056b3 100%);
   color: white;
@@ -32,7 +32,6 @@
   overflow: hidden;
 }
 
-/* Base text is hidden */
 .fabText {
   max-width: 0;
   opacity: 0;
@@ -43,18 +42,16 @@
   margin-left: 0;
 }
 
-/* Only hover the FAB to expand */
 .fab:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 16px rgba(0, 50, 150, 0.35);
-  padding: 0 24px; /* Increase horizontal padding dynamically */
+  padding: 0 24px;
 }
 
-/* Expand the text */
 .fab:hover .fabText {
   max-width: 120px;
   opacity: 1;
-  margin-left: 8px; /* Gap between icon and text */
+  margin-left: 8px;
 }
 
 .fab:active {
@@ -62,7 +59,6 @@
   box-shadow: 0 2px 8px rgba(0, 50, 150, 0.25);
 }
 
-/* Dark mode specific shadow tweaks */
 :global([data-bs-theme='dark']) .fab {
   box-shadow:
     0 4px 15px rgba(0, 0, 0, 0.6),

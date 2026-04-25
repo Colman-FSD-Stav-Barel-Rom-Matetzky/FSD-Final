@@ -28,13 +28,11 @@ describe('User Endpoints', () => {
     await mongoose.connect(DbConfig.mongoUri);
     await User.deleteMany({});
 
-    // Ensure test assets directory exists and create a dummy image file
     if (!fs.existsSync(testImageDir)) {
       fs.mkdirSync(testImageDir, { recursive: true });
     }
     fs.writeFileSync(testImagePath, 'dummy image content');
 
-    // Register User 1
     const res1 = await request(app).post('/auth/register').send({
       email: 'user1@test.com',
       password: 'Password123!',
@@ -43,7 +41,6 @@ describe('User Endpoints', () => {
     user1Token = (res1.body as AuthResponse).data.accessToken;
     user1Id = (res1.body as AuthResponse).data.user._id;
 
-    // Register User 2
     const res2 = await request(app).post('/auth/register').send({
       email: 'user2@test.com',
       password: 'Password123!',
@@ -53,14 +50,16 @@ describe('User Endpoints', () => {
   });
 
   afterAll(async () => {
-    // Cleanup users and dummy test image
     await User.deleteMany({});
+
     if (fs.existsSync(testImagePath)) {
       fs.unlinkSync(testImagePath);
     }
+
     if (fs.existsSync(testImageDir)) {
       fs.rmdirSync(testImageDir);
     }
+
     await mongoose.connection.close();
   });
 
@@ -123,7 +122,6 @@ describe('User Endpoints', () => {
         .set('Authorization', `Bearer ${user1Token}`)
         .send({ username: 'hackerman' });
 
-      // Assuming authMiddleware might return 403 rather than 401 for this forbidden action
       expect(response.status).toBe(403);
     });
 

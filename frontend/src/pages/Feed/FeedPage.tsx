@@ -82,6 +82,7 @@ export const FeedPage: FC = () => {
       setSearchResults(results);
     } catch (err) {
       setSearchError('Search failed');
+      alert('Search failed');
       console.error(err);
     } finally {
       setIsSearching(false);

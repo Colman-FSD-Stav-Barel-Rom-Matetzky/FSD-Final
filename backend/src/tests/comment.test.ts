@@ -213,12 +213,10 @@ describe('Comment and Like Endpoints', () => {
   });
 
   it('should remove a like on second call to POST /posts/:id/like', async () => {
-    // First like
     await request(app)
       .post(`/posts/${postId}/like`)
       .set('Authorization', `Bearer ${ownerToken}`);
 
-    // Second like (toggle off)
     const res = await request(app)
       .post(`/posts/${postId}/like`)
       .set('Authorization', `Bearer ${ownerToken}`);

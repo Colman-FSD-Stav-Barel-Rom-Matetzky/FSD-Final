@@ -42,9 +42,7 @@ export const useFeed = () => {
   }, [isLoading]);
 
   useEffect(() => {
-    return () => {
-      // Cleanup on unmount if needed
-    };
+    return () => { };
   }, []);
 
   const updatePostLikes = useCallback(

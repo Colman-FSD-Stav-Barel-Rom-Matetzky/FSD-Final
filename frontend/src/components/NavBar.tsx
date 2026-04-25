@@ -12,7 +12,6 @@ export const NavBar: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Sync initial state
     if (isOpen) {
       document.body.classList.add('sidebar-open');
     } else {
@@ -25,7 +24,7 @@ export const NavBar: FC = () => {
       await logout();
       navigate('/login');
     } catch {
-      // Ignore
+      alert('Failed to logout');
     }
   };
 

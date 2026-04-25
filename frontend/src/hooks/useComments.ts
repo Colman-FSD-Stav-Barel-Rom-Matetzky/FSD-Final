@@ -46,10 +46,10 @@ export const useComments = (postId: string) => {
   }, [postId, isLoading]);
 
   useEffect(() => {
-    const abort = fetchMore() ?? (() => {});
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    const abort = fetchMore() ?? (() => { });
     return () => abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchMore]);
 
   const addComment = useCallback((comment: Comment) => {
     setComments((prev) => [comment, ...prev]);

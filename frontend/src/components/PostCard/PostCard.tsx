@@ -41,7 +41,6 @@ export const PostCard: FC<PostCardProps> = ({
   const handleLike = async () => {
     const previousLikes = [...post.likes];
 
-    // Optimistic update
     const updatedLikes = isLiked
       ? previousLikes.filter((id) => id !== currentUserId)
       : [...previousLikes, currentUserId];
@@ -52,7 +51,6 @@ export const PostCard: FC<PostCardProps> = ({
       const response = await request;
       onLikeToggled(post._id, response.data.data.likes);
     } catch {
-      // Revert on failure
       onLikeToggled(post._id, previousLikes);
     }
   };
@@ -65,7 +63,7 @@ export const PostCard: FC<PostCardProps> = ({
       onPostDeleted(post._id);
       setShowDeleteModal(false);
     } catch {
-      // Let user know — could add inline error, keeping it simple
+      alert('Failed to delete post');
     } finally {
       setIsDeleting(false);
     }

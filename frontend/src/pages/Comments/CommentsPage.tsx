@@ -59,7 +59,7 @@ export const CommentsPage: FC = () => {
       setPost((p) => (p ? { ...p, commentCount: p.commentCount + 1 } : p));
       setNewComment('');
     } catch {
-      // Could show inline error if needed
+      alert('Failed to post comment');
     } finally {
       setIsPosting(false);
     }

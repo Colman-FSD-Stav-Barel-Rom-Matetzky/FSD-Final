@@ -9,7 +9,6 @@ const PORT = AppConfig.port;
 
 void connectDB().then(() => {
   if (process.env.NODE_ENV !== 'production') {
-    console.log('development');
     http.createServer(app).listen(PORT);
   }
 

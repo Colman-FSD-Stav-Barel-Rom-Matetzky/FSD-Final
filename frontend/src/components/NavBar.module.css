@@ -139,7 +139,6 @@
 .sideMenuCollapsed .menuItem {
   justify-content: center;
   padding: 1rem 0;
-  /* Adjust for border width so it stays perfectly centered */
   padding-right: 4px;
 }
 

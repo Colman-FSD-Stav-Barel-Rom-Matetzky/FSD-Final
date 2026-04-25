@@ -74,8 +74,6 @@ export const ProfilePage: FC = () => {
 
       const updatedUser = await userService.updateProfile(userId, formData);
       setProfileUser(updatedUser);
-      // Since it's our own profile, we should also trigger an auth re-fetch or state update
-      // Alternatively, trigger a manual page reload to refresh NavBar state immediately
       window.location.reload();
     } catch {
       alert('Failed to update profile');

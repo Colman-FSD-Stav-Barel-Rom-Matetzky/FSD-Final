@@ -43,11 +43,9 @@ export class UserController extends BaseController<IUser> {
       }
 
       if (req.file) {
-        // Construct the file path to be stored and accessible via static route
         updateData.profileImage = `/uploads/profiles/${req.file.filename}`;
       }
 
-      // Ensure fields like password or email are not randomly overwritten here
       delete updateData.password;
       delete updateData.email;
       delete updateData.isGoogleUser;

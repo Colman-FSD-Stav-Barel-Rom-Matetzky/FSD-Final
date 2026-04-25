@@ -104,6 +104,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         await logoutService(refreshToken).request;
       } catch (error) {
         console.error('Logout failed:', error);
+        alert('Logout failed');
       }
     }
 
