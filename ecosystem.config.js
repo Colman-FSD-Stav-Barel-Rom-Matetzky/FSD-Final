@@ -20,6 +20,9 @@ module.exports = {
         PM2_SERVE_SPA: 'true',
         PM2_SERVE_HOMEPAGE: '/index.html',
       },
+      env_production: {
+        NODE_ENV: 'production',
+      },
     },
   ],
 };
