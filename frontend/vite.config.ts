@@ -6,5 +6,6 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 80,
+    allowedHosts: ['node40.cs.colman.ac.il'],
   },
 });
