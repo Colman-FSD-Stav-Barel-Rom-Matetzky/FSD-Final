@@ -8,10 +8,12 @@ export const useComments = (postId: string) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const cursorRef = useRef<string | null>(null);
+  const isFetchingRef = useRef(false);
 
   const fetchMore = useCallback(() => {
-    if (isLoading) return;
+    if (isFetchingRef.current) return;
 
+    isFetchingRef.current = true;
     setIsLoading(true);
     setError(null);
 
@@ -31,24 +33,28 @@ export const useComments = (postId: string) => {
         });
         cursorRef.current = res.data.nextCursor;
         setHasMore(res.data.nextCursor !== null);
-        setIsLoading(false);
       })
       .catch((err) => {
         if (!(err instanceof CanceledError)) {
           setError(
             err instanceof Error ? err.message : 'Failed to load comments',
           );
-          setIsLoading(false);
         }
+      })
+      .finally(() => {
+        setIsLoading(false);
+        isFetchingRef.current = false;
       });
 
     return abort;
-  }, [postId, isLoading]);
+  }, [postId]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    const abort = fetchMore() ?? (() => { });
-    return () => abort();
+    const abort = fetchMore();
+    return () => {
+      if (abort) abort();
+    };
   }, [fetchMore]);
 
   const addComment = useCallback((comment: Comment) => {

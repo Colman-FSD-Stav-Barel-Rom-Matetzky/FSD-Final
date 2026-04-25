@@ -8,10 +8,12 @@ export const useFeed = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const cursorRef = useRef<string | null>(null);
+  const isFetchingRef = useRef(false);
 
   const fetchMore = useCallback(async () => {
-    if (isLoading) return;
+    if (isFetchingRef.current) return;
 
+    isFetchingRef.current = true;
     setIsLoading(true);
     setError(null);
 
@@ -36,10 +38,11 @@ export const useFeed = () => {
       setError(err instanceof Error ? err.message : 'Failed to load posts');
     } finally {
       setIsLoading(false);
+      isFetchingRef.current = false;
     }
 
     return abort;
-  }, [isLoading]);
+  }, []);
 
   useEffect(() => {
     return () => { };
